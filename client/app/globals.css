@@ -70,8 +70,6 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.9751 0.0127 244.2507);
-  --foreground: oklch(0.3729 0.0306 259.7328);
   --card: oklch(1.0000 0 0);
   --card-foreground: oklch(0.3729 0.0306 259.7328);
   --popover: oklch(1.0000 0 0);
@@ -122,6 +120,8 @@
   --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 8px 10px -2px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
   --tracking-normal: 0em;
+  --background: oklch(0.9751 0.0127 244.2507);
+  --foreground: oklch(0.3729 0.0306 259.7328);
 }
 
 .dark {
