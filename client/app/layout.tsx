@@ -21,8 +21,7 @@ export default function RootLayout({
         >
           <Header />
           <main>{children}</main>
-          <Footer
-            className="px-20" />
+          <Footer className="px-20" />
         </ThemeProvider>
 
       </body>

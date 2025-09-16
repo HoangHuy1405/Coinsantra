@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default function NavMenu({ menu }: { menu: Menu[] }) {
     return (
-        <NavigationMenu >
+        <NavigationMenu viewport={false}>
             <NavigationMenuList>
                 {menu.map((item) => (
                     <NavigationMenuItem key={item.id}>
