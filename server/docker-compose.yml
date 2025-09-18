@@ -1,0 +1,34 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_server
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: trade_app
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql # Persist data between container restarts
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # mail-dev:
+  #   container_name: mail-dev-bsn
+  #   image: maildev/maildev
+  #   ports:
+  #     - 1080:1080 # used to display web application
+  #     - 1025:1025 # used by spring application
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  mysql_data:

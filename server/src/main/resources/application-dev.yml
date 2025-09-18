@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/trade_app
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format-sql: true
+    database: mysql
+    #database-platform: org.hibernate.dialect.MySQL8Dialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tradethk@gmail.com
+    password: tsxe fyad iqnt iapl
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enable: true # upgrade to secure SMTP connection using tls encryption
+        connectiontimout: 5000
+        timeout: 3000
+        writetimeout: 5000
+
+application:
+  security:
+    jwt:
+      secret-key: 7a6e7732dfeab6fea710c19dbaaebb3dd4a609729aa68773de35f42ca0325fbe
+      access-expiration: 86400
+      refresh-expiration: 86400000

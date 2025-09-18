@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-TradeAppApplication<server>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.web.TradeApp.TradeAppApplication",
+      "projectName": "server",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-TradeAppApplication<TradeApp-server>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.web.TradeApp.TradeAppApplication",
+      "projectName": "TradeApp-server",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
