@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import TradingViewWidget from './TradingViewWidget';
 
@@ -16,6 +14,8 @@ export default function TickerTape({ className }: { className?: string }) {
         isTransparent: false,
         displayMode: "adaptive",
         locale: "en",
+        width: "100%",
+        height: "100%"
     };
 
     return (

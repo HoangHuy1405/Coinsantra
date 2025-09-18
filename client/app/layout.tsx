@@ -1,4 +1,3 @@
-import Image from "next/image";
 import "./globals.css";
 
 import Header from "./ui/my_components/Header";
@@ -17,10 +16,10 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange
+          disableTransitionOnChange={false}
         >
           <Header />
-          <main>{children}</main>
+          <main className="overflow-x-hidden">{children}</main>
           <Footer className="px-20" />
         </ThemeProvider>
 

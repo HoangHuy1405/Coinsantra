@@ -6,17 +6,16 @@ import { useState } from "react"
 import { Menu, X } from "lucide-react"
 import NavMenu from "./NavMenu"
 import { menuData } from "./menuData"
-import { ModeToggle } from "../Theme/ModeToggle"
-import { Button } from "../../shadcn/button"
-import TickerTape from "../../widgets/TicketTape"
+import { ModeToggle } from "@/app/ui/my_components/Theme/ModeToggle"
+import { Button } from "@/app/ui/shadcn/button"
+import TickerTape from "@/app/ui/widgets/TicketTape"
 
 export default function Header() {
     const [mobileOpen, setMobileOpen] = useState(false)
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-
-            <div className="sticky top-0">
+            <div className="sticky top-0 border border-border ">
                 <TickerTape />
             </div>
             <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">

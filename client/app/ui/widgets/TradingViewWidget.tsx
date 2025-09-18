@@ -31,8 +31,6 @@ export default function TradingViewWidget({ src, config, className }: Props) {
 
         const copyright = document.createElement('div');
         copyright.className = 'tradingview-widget-copyright';
-        // có thể bỏ dòng bản quyền nếu không cần hiển thị:
-        // copyright.style.display = 'none';
 
         // Script TradingView + JSON config ở trong innerHTML của tag <script>
         const script = document.createElement('script');
@@ -42,7 +40,8 @@ export default function TradingViewWidget({ src, config, className }: Props) {
 
         // Áp dụng theme (light/dark) theo next-themes nếu widget có hỗ trợ
         const colorTheme = theme === 'dark' ? 'dark' : 'light';
-        const finalConfig = { ...config, colorTheme };
+        const scaleFontColor = theme === 'dark' ? '#DBDBDB' : '#0F0F0F';
+        const finalConfig = { ...config, colorTheme, scaleFontColor, autosize: true };
 
         script.innerHTML = JSON.stringify(finalConfig);
 
