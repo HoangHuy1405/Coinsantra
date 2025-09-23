@@ -44,13 +44,13 @@ export default function LoginCard() {
           <CardContent>
             {mode === "login" ? <LoginForm /> : <RegisterForm />}
 
-            <p className="text-center text-sm text-gray-500 mt-4">
+            <p className="text-center text-sm text-muted-foreground mt-4">
               {mode === "login" ? (
                 <>
                   Don’t have an account?{" "}
                   <Link
                     href="/login?mode=register"
-                    className="text-black hover:underline"
+                    className="text-foreground hover:underline"
                   >
                     Sign up
                   </Link>
@@ -60,7 +60,7 @@ export default function LoginCard() {
                   Already have an account?{" "}
                   <Link
                     href="/login?mode=login"
-                    className="text-black hover:underline"
+                    className="text-foreground hover:underline"
                   >
                     Login
                   </Link>
@@ -76,8 +76,8 @@ export default function LoginCard() {
             </div>
 
             <div className="flex justify-center gap-4 mt-3">
-              <GoogleButton onClick={() => {}} />
-              <GithubButton onClick={() => {}} />
+              <GoogleButton onClick={() => { }} />
+              <GithubButton onClick={() => { }} />
             </div>
           </CardContent>
         </motion.div>
