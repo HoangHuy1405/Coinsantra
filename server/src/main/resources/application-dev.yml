@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/trade_app
     username: root
-    password: 123456
+    password: root
   jpa:
     hibernate:
       ddl-auto: update
@@ -33,5 +33,4 @@ application:
     jwt:
       secret-key: 7a6e7732dfeab6fea710c19dbaaebb3dd4a609729aa68773de35f42ca0325fbe
       access-expiration: 86400
-      # access-expiration: 10
-      refresh-expiration: 8640000
+      refresh-expiration: 86400000

@@ -16,7 +16,7 @@ import com.web.TradeApp.utils.Annotation.ApiMessage;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("user")
 @RequiredArgsConstructor
 public class UserController {
 

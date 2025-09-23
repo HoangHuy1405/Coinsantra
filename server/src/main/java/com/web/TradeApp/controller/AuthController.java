@@ -97,9 +97,9 @@ public class AuthController {
                 // update user in db (override old one)
                 this.userService.updateUserToken(new_refresh_token, email);
 
-                // Set cookie here isn't work because nextAuth is server side rendering
                 ResponseCookie resCookie = ResponseCookie
-                                .from("refresh_token", new_refresh_token)
+                                .from("refresh_token",
+                                                new_refresh_token)
                                 .httpOnly(true)
                                 .secure(true)
                                 .path("/")

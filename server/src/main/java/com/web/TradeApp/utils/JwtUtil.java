@@ -52,7 +52,7 @@ public class JwtUtil {
 
     public String generateRefreshToken(String email, LoginResponse response) {
         Instant now = Instant.now();
-        Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
         // payload
         // @formatter:off 
