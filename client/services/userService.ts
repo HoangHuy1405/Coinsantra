@@ -6,6 +6,8 @@ export type UserProfile = {
   email: string;
   username: string;
   fullname: string;
+  firstName: string;
+  lastName: string;
   avatarUrl: string | null;
   roles: string[];
 };
@@ -16,7 +18,7 @@ export type Account = {
 
 export const UserService = (client: AxiosInstance) => ({
   async getProfile() {
-    const { data } = await client.get<ApiResponse<Account>>("/users/account");
+    const { data } = await client.get<ApiResponse<Account>>("/user/account");
     console.log("Full API response:", data);
     return data.data?.user; // ✅ unwrap once, return just the user object
   },
