@@ -51,6 +51,8 @@ public class UserController {
             userLogin.setId(currentUser.getId());
             userLogin.setEmail(currentUser.getEmail());
             userLogin.setUsername(currentUser.getUsername());
+            userLogin.setFirstName(currentUser.getFirstName());
+            userLogin.setLastName(currentUser.getLastName());
             userLogin.setFullname(currentUser.getFullName());
             userLogin.setRoles(roleNames);
             userGetAccount.setUser(userLogin);

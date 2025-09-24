@@ -11,6 +11,7 @@ import { Button } from "@/app/ui/shadcn/button";
 import TickerTape from "@/app/ui/widgets/TicketTape";
 import { signOut, useSession } from "next-auth/react";
 import { useSignOut } from "@/hooks/useSignOut";
+import UserAvatar from "../UserAvatar";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -32,98 +33,97 @@ export default function Header() {
         supports-[backdrop-filter]:bg-background/60 transition-colors
         ${scrolled ? "border-b border-border" : "border-b border-transparent"}`}
     >
-      <div className="sticky top-0 border-border">
-        <TickerTape />
-      </div>
-      <div
-        className="container mx-auto flex h-16 items-center justify-between px-4
+      <div className="flex flex-col">
+
+        <div className=" sticky top-0 border-border">
+          <TickerTape />
+        </div>
+        <div
+          className="container mx-auto flex h-16 items-center justify-between px-4
           md:px-8"
-      >
-        {/* Left: Logo + Nav */}
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
-            <Image
-              className="dark:invert"
-              src="/next.svg"
-              alt="Next.js logo"
-              width={120}
-              height={28}
-              priority
-            />
-          </Link>
-          <div className="hidden md:block">
-            <NavMenu menu={menuData} />
+        >
+          {/* Left: Logo + Nav */}
+          <div className="flex items-center gap-6">
+            <Link href="/" className="flex items-center gap-2">
+              <Image
+                className="dark:invert"
+                src="/next.svg"
+                alt="Next.js logo"
+                width={120}
+                height={28}
+                priority
+              />
+            </Link>
+            <div className="hidden md:block">
+              <NavMenu menu={menuData} />
+            </div>
+          </div>
+
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2">
+            {status === "authenticated" ? (
+              <div className="flex items-center gap-3">
+                {/* User Avatar + Name */}
+                <div className="flex items-center gap-2">
+                  <UserAvatar
+                    avatarUrl={session.user.avatarUrl}
+                    fullname={session.user.fullname}
+                    username={session.user.username}
+                    size={32}
+                  />
+                  <span className="text-sm font-medium">
+                    <Link href="/profile">{session.user.username}</Link>
+                  </span>
+                </div>
+
+                {/* Sign Out Button */}
+                <Button
+                  size="sm"
+                  onClick={() => signOutUser()}
+                  disabled={isPending}
+                >
+                  {isPending ? "Logging out..." : "Sign Out"}
+                </Button>
+              </div>
+            ) : (
+              <div className="hidden sm:flex gap-2">
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/login?mode=login">Login</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href="/login?mode=register">Sign Up</Link>
+                </Button>
+              </div>
+            )}
+            <ModeToggle />
+            <button
+              className="sm:hidden inline-flex items-center justify-center
+              rounded-md p-2 hover:bg-accent"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2">
-          {status === "authenticated" ? (
-            <div className="flex items-center gap-3">
-              {/* User Avatar + Name */}
-              <div className="flex items-center gap-2">
-                <img
-                  src={
-                    session.user.avatarUrl ??
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      session.user.fullname || session.user.username,
-                    )}&background=random`
-                  }
-                  alt="avatar"
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-                <span className="text-sm font-medium">
-                  <Link href="/profile">{session.user.username}</Link>
-                </span>
-              </div>
-
-              {/* Sign Out Button */}
-              <Button
-                size="sm"
-                onClick={() => signOutUser()}
-                disabled={isPending}
-              >
-                {isPending ? "Logging out..." : "Sign Out"}
-              </Button>
-            </div>
-          ) : (
-            <div className="hidden sm:flex gap-2">
-              <Button asChild variant="outline" size="sm">
+        {/* Mobile Nav */}
+        {mobileOpen && (
+          <div className="sm:hidden border-t bg-card/95 backdrop-blur px-4 pb-4">
+            <div className="mt-4 flex flex-col gap-2">
+              <Button asChild variant="outline" size="sm" className="w-full">
                 <Link href="/login?mode=login">Login</Link>
               </Button>
-              <Button asChild size="sm">
+              <Button asChild size="sm" className="w-full">
                 <Link href="/login?mode=register">Sign Up</Link>
               </Button>
             </div>
-          )}
-          <ModeToggle />
-          <button
-            className="sm:hidden inline-flex items-center justify-center
-              rounded-md p-2 hover:bg-accent"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Nav */}
-      {mobileOpen && (
-        <div className="sm:hidden border-t bg-card/95 backdrop-blur px-4 pb-4">
-          <div className="mt-4 flex flex-col gap-2">
-            <Button asChild variant="outline" size="sm" className="w-full">
-              <Link href="/login?mode=login">Login</Link>
-            </Button>
-            <Button asChild size="sm" className="w-full">
-              <Link href="/login?mode=register">Sign Up</Link>
-            </Button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </header>
   );
 }
