@@ -1,5 +1,7 @@
 package com.web.TradeApp.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.TradeApp.dto.ResultPaginationDTO;
 import com.web.TradeApp.dto.CoinDTO.CoinDepositRequest;
 import com.web.TradeApp.dto.CoinDTO.CoinDepositResponse;
 import com.web.TradeApp.service.interfaces.AdminCoinService;
@@ -29,5 +32,13 @@ public class AdminController {
 
         CoinDepositResponse response = adminCoinService.depositCoin(request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/coins")
+    @ApiMessage("Coins fetched successfully")
+    public ResponseEntity<ResultPaginationDTO> getAllCoins(
+            Pageable pageable) {
+        ResultPaginationDTO result = adminCoinService.getAllCoins(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
