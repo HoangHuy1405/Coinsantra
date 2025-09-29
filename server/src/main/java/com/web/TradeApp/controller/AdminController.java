@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.web.TradeApp.dto.ResultPaginationDTO;
 import com.web.TradeApp.dto.CoinDTO.CoinDepositRequest;
 import com.web.TradeApp.dto.CoinDTO.CoinDepositResponse;
+import com.web.TradeApp.dto.CoinDTO.CoinWithdrawRequest;
+import com.web.TradeApp.dto.CoinDTO.CoinWithdrawResponse;
 import com.web.TradeApp.service.interfaces.AdminCoinService;
 import com.web.TradeApp.utils.Annotation.ApiMessage;
 import jakarta.validation.Valid;
@@ -26,11 +28,20 @@ public class AdminController {
     private final AdminCoinService adminCoinService;
 
     @PostMapping("/coins/deposit")
-    @ApiMessage("Coin added successfully")
+    @ApiMessage("Coin deposited successfully")
     public ResponseEntity<CoinDepositResponse> depositCoin(
             @Valid @RequestBody CoinDepositRequest request) {
 
         CoinDepositResponse response = adminCoinService.depositCoin(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/coins/withdraw")
+    @ApiMessage("Coin withdrew successfully")
+    public ResponseEntity<CoinWithdrawResponse> withdrawCoin(
+            @Valid @RequestBody CoinWithdrawRequest request) {
+
+        CoinWithdrawResponse response = adminCoinService.withdrawCoin(request);
         return ResponseEntity.ok(response);
     }
 

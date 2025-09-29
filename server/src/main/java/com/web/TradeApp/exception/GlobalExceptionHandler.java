@@ -3,15 +3,21 @@ package com.web.TradeApp.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.net.URI;
 import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -21,7 +27,8 @@ public class GlobalExceptionHandler {
             NoResourceFoundException.class,
             NoSuchElementException.class,
             UsernameNotFoundException.class,
-            UserNotFoundException.class
+            UserNotFoundException.class,
+            IdInvalidException.class
     })
     public ProblemDetail handleNotFoundException(Exception ex) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
@@ -89,6 +96,20 @@ public class GlobalExceptionHandler {
         problem.setType(URI.create("https://api.example.com/errors/conflict"));
         problem.setProperty("timestamp", Instant.now());
         return problem;
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(
+            AuthorizationDeniedException ex, HttpServletRequest request) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("title", "Access Denied");
+        body.put("status", HttpStatus.FORBIDDEN.value());
+        body.put("detail", "You do not have permission to access this resource.");
+        body.put("instance", request.getRequestURI());
+        body.put("timestamp", Instant.now().toString());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
     }
 
     @ExceptionHandler(Exception.class)

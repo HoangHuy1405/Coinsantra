@@ -12,11 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CoinDepositResponse {
+public class CoinWithdrawResponse {
     private UUID id;
     private String coinGeckoId;
-    private String symbol;
-    private String name;
-    private BigDecimal depositedQuantity;
+    private BigDecimal withdrewQuantity;
     private BigDecimal newQuantity;
 }
