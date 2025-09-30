@@ -15,7 +15,7 @@
     "components": "@/app/ui",
     "utils": "@/lib/utils",
     "ui": "@/app/ui/shadcn",
-    "lib": "@/app/lib",
+    "lib": "@/lib",
     "hooks": "@/app/hooks"
   },
   "registries": {}

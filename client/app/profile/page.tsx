@@ -15,6 +15,8 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/shadcn/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import ProfileCard from "./ProfileCard";
+import AccountCard from "./AccountCard";
+import SecurityCard from "./SecurityCard";
 
 export default function ProfilePage() {
   const { data: profile, isLoading, error } = useUserProfile();
@@ -66,25 +68,27 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <Tabs defaultValue="profile" variant="underline" className="w-full space-y-5">
+        <Tabs defaultValue="profile" variant="underline" className="w-full space-y-5 ">
           <TabsList >
             <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="account">Account</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="profile">
+          <TabsContent value="profile" className="space-y-5">
             <ProfileCard
               profile={profile}
             />
           </TabsContent>
 
-          <TabsContent value="security">
+          <TabsContent value="account" className="space-y-5">
+            <AccountCard />
+          </TabsContent>
 
+          <TabsContent value="security" className="space-y-5">
+            <SecurityCard />
           </TabsContent>
         </Tabs>
-
-
-
       </div>
     </div >
   );
