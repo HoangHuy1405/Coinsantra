@@ -15,7 +15,7 @@ export function useSignUp() {
     onSuccess: (res) => {
       if (res.statusCode === 201) {
         toast.success("🎉 Registration successful! Please log in.");
-        router.push("/login?mode=login");
+        // router.push("/login?mode=login");
       } else {
         toast.error(res.message || "Registration failed.");
       }

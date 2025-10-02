@@ -39,6 +39,11 @@ export const AuthService = {
     );
     return data;
   },
+  async activate(token: string) {
+    await api.post<ApiResponse<null>>("/auth/activate", {
+      token,
+    });
+  },
 
   async login(payload: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     const { data } = await api.post<ApiResponse<LoginResponse>>(

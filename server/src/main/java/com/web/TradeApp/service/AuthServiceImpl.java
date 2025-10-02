@@ -9,8 +9,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.web.TradeApp.dto.AuthDTO.LoginRequest;
 import com.web.TradeApp.dto.AuthDTO.LoginResponse;
@@ -23,9 +25,11 @@ import com.web.TradeApp.model.user.User;
 import com.web.TradeApp.repository.TokenRepository;
 import com.web.TradeApp.repository.UserRepository;
 import com.web.TradeApp.service.interfaces.AuthService;
+import com.web.TradeApp.service.interfaces.EmailService;
 import com.web.TradeApp.service.interfaces.UserService;
 import com.web.TradeApp.utils.JwtUtil;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final EmailService emailService;
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
@@ -50,12 +55,12 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.email())
                 .password(hashPassword)
                 .accountLocked(false)
-                .enabled(true)
+                .enabled(false)
                 .roles(Set.of(Role.TRADER))
                 .build();
 
         userRepository.save(user);
-        // sendValidationEmail(user);
+        sendValidationEmail(user);
 
         return null;
     }
@@ -80,6 +85,60 @@ public class AuthServiceImpl implements AuthService {
             throw new UserNotFoundException("User not found");
 
         return createLoginRes(currentUser, request.email());
+    }
+
+    @Transactional
+    @Override
+    public void activateAccount(String token) throws MessagingException {
+        Token savedToken = tokenRepository.findByToken(token)
+                // todo exception has to be defined
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+        if (Instant.now().isAfter(savedToken.getExpiresAt())) {
+            // sendValidationEmail(savedToken.getUser());
+            throw new RuntimeException(
+                    "Activation token has Invalid/Expired!");
+        }
+
+        var user = userRepository.findById(savedToken.getUser().getId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setEnabled(true);
+        userRepository.save(user);
+
+        savedToken.setValidatedAt(Instant.now());
+        tokenRepository.save(savedToken);
+    }
+
+    private void sendValidationEmail(User user) {
+        var newToken = generateAndSaveActivationToken(user);
+        // send email
+        emailService.sendConfirmationEmail(
+                user.getEmail(),
+                user.getFullName(),
+                newToken,
+                "Account activation");
+    }
+
+    private String generateAndSaveActivationToken(User user) {
+        String generatedToken = generateActivationCode(6);
+        var token = Token.builder()
+                .token(generatedToken)
+                .expiresAt(Instant.now().plusSeconds(900)) // 15 min
+                .user(user)
+                .build();
+        tokenRepository.save(token);
+        return generatedToken;
+    }
+
+    private String generateActivationCode(int length) {
+        String characters = "0123456789";
+        StringBuilder stringBuilder = new StringBuilder();
+        SecureRandom secureRandom = new SecureRandom();
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = secureRandom.nextInt(characters.length());
+            stringBuilder.append(characters.charAt(randomIndex));
+        }
+        return stringBuilder.toString();
     }
 
     public LoginResponse createLoginRes(User user, String email) {
@@ -109,34 +168,6 @@ public class AuthServiceImpl implements AuthService {
         res.setAccessToken(access_token);
 
         return res;
-    }
-
-    private void sendValidationEmail(User user) {
-        var newToken = generateAndSaveActivationToken(user);
-        // send email
-    }
-
-    private String generateAndSaveActivationToken(User user) {
-        String generatedToken = generateActivationCode(6);
-        var token = Token.builder()
-                .token(generatedToken)
-                .expiresAt(Instant.now().plusSeconds(900)) // 15 min
-                .user(user)
-                .build();
-        tokenRepository.save(token);
-        return generatedToken;
-    }
-
-    private String generateActivationCode(int length) {
-        String characters = "0123456789";
-        StringBuilder stringBuilder = new StringBuilder();
-        SecureRandom secureRandom = new SecureRandom();
-
-        for (int i = 0; i < length; i++) {
-            int randomIndex = secureRandom.nextInt(characters.length());
-            stringBuilder.append(characters.charAt(randomIndex));
-        }
-        return stringBuilder.toString();
     }
 
 }

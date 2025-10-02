@@ -21,7 +21,6 @@ public class TestController {
         emailService.sendConfirmationEmail(
                 "nguyenmaihoanghuy@gmail.com", // recipient
                 "Huy",
-                "https://example.com/verify",
                 "123456",
                 "Confirm Your Account");
         return "Email sent!";

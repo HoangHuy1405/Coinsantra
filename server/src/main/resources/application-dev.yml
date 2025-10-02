@@ -23,9 +23,9 @@ spring:
       mail:
         smtp:
           trust: "*"
-        auth: true
-        starttls:
-          enable: true # upgrade to secure SMTP connection using tls encryption
+          auth: true
+          starttls:
+            enable: true
         connectiontimout: 5000
         timeout: 3000
         writetimeout: 5000

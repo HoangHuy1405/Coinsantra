@@ -6,8 +6,12 @@ import com.web.TradeApp.dto.AuthDTO.RegisterRequest;
 import com.web.TradeApp.dto.AuthDTO.RegisterResponse;
 import com.web.TradeApp.model.user.User;
 
+import jakarta.mail.MessagingException;
+
 public interface AuthService {
     RegisterResponse register(RegisterRequest request);
+
+    void activateAccount(String token) throws MessagingException;
 
     LoginResponse login(LoginRequest request);
 

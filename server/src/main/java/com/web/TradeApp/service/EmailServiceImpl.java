@@ -4,15 +4,21 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.web.TradeApp.model.email.EmailDetails;
 import com.web.TradeApp.service.interfaces.EmailService;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED;
+
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 @Slf4j
@@ -21,12 +27,14 @@ public class EmailServiceImpl implements EmailService {
 
         private final JavaMailSender mailSender;
 
+        @Value("${spring.mail.username}")
+        private String sender;
+
         @Async
         @Override
         public void sendConfirmationEmail(
                         String to,
                         String username,
-                        String confirmationUrl,
                         String activationCode,
                         String subject) {
                 try {
@@ -36,7 +44,7 @@ public class EmailServiceImpl implements EmailService {
                                         MULTIPART_MODE_MIXED,
                                         UTF_8.name());
 
-                        helper.setFrom("your.email@gmail.com"); // or your app domain email
+                        helper.setFrom(sender); // replace with your app domain email
                         helper.setTo(to);
                         helper.setSubject(subject);
 
@@ -44,26 +52,27 @@ public class EmailServiceImpl implements EmailService {
                         String textContent = """
                                         Hello %s,
 
-                                        Please confirm your account by visiting the link below:
+                                        Thank you for registering. Please use the confirmation code below to activate your account:
+
                                         %s
 
-                                        Or use this activation code: %s
-                                        """.formatted(username, confirmationUrl, activationCode);
+                                        This code will expire soon. If you did not request this, you can ignore this email.
+                                        """
+                                        .formatted(username, activationCode);
 
-                        // Simple HTML version
+                        // HTML version
                         String htmlContent = """
                                         <html>
                                         <body>
                                             <h2>Hello %s,</h2>
-                                            <p>Thank you for registering. Please confirm your account by clicking the link below:</p>
-                                            <p><a href="%s" style="color: #1a73e8;">Confirm Account</a></p>
-                                            <p>Or use this activation code: <b>%s</b></p>
+                                            <p>Thank you for registering. Please use the confirmation code below to activate your account:</p>
+                                            <h3 style="color: #1a73e8;">%s</h3>
                                             <hr>
-                                            <small>This link will expire soon. If you did not request this, you can ignore this email.</small>
+                                            <small>This code will expire soon. If you did not request this, you can ignore this email.</small>
                                         </body>
                                         </html>
                                         """
-                                        .formatted(username, confirmationUrl, activationCode);
+                                        .formatted(username, activationCode);
 
                         helper.setText(textContent, htmlContent); // sets both plain and HTML
 
@@ -74,5 +83,38 @@ public class EmailServiceImpl implements EmailService {
                         log.error("Failed to send confirmation email to {}: {}", to, e.getMessage());
                         throw new RuntimeException("Failed to send confirmation email", e);
                 }
+        }
+
+        @Override
+        public String sendSimpleMail(EmailDetails details) {
+                try {
+
+                        // Creating a simple mail message
+                        SimpleMailMessage mailMessage = new SimpleMailMessage();
+
+                        // Setting up necessary details
+                        mailMessage.setFrom(sender);
+                        mailMessage.setTo(details.getRecipient());
+                        mailMessage.setText(details.getMsgBody());
+                        mailMessage.setSubject(details.getSubject());
+
+                        // Sending the mail
+                        mailSender.send(mailMessage);
+                        return "Mail Sent Successfully...";
+                } catch (MailException mailEx) {
+                        // Specific Spring exception for mail errors
+                        log.error("Mail sending failed: {}", mailEx.getMessage(), mailEx);
+                        return "Failed to send mail: " + mailEx.getMessage();
+                } catch (Exception ex) {
+                        // Catch-all for unexpected exceptions
+                        log.error("Unexpected error while sending mail", ex);
+                        return "Unexpected error while sending mail. Please try again later.";
+                }
+        }
+
+        @Override
+        public String sendMailWithAttachment(EmailDetails details) {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'sendMailWithAttachment'");
         }
 }

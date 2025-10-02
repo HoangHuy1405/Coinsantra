@@ -17,6 +17,7 @@ import com.web.TradeApp.dto.AuthDTO.LoginRequest;
 import com.web.TradeApp.dto.AuthDTO.LoginResponse;
 import com.web.TradeApp.dto.AuthDTO.RegisterRequest;
 import com.web.TradeApp.dto.AuthDTO.RegisterResponse;
+import com.web.TradeApp.dto.AuthDTO.TokenRequest;
 import com.web.TradeApp.exception.UserNotFoundException;
 import com.web.TradeApp.model.user.User;
 import com.web.TradeApp.service.interfaces.AuthService;
@@ -25,6 +26,7 @@ import com.web.TradeApp.utils.JwtUtil;
 import com.web.TradeApp.utils.SecurityUtil;
 import com.web.TradeApp.utils.Annotation.ApiMessage;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -46,6 +48,13 @@ public class AuthController {
                         @RequestBody @Valid RegisterRequest request) {
                 RegisterResponse response = authService.register(request);
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }
+
+        @PostMapping("/activate")
+        @ApiMessage("Account activate successfully")
+        public ResponseEntity<Void> confirm(@RequestBody TokenRequest request) throws MessagingException {
+                authService.activateAccount(request.getToken());
+                return ResponseEntity.ok().body(null);
         }
 
         @PostMapping("/login")

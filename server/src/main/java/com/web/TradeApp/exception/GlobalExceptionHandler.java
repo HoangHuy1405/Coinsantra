@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -94,6 +95,16 @@ public class GlobalExceptionHandler {
         problem.setTitle("Data Integrity Violation");
         problem.setDetail(detailMessage);
         problem.setType(URI.create("https://api.example.com/errors/conflict"));
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ProblemDetail handleDisabledAccount(DisabledException ex) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problem.setTitle("Account Disabled");
+        problem.setDetail("Your account has been disabled. Please verify before continue.");
+        problem.setType(URI.create("https://api.example.com/errors/account-disabled"));
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

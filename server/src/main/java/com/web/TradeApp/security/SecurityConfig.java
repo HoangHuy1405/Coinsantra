@@ -35,10 +35,11 @@ public class SecurityConfig {
                         "/", "/auth/login",
                         "/auth/register",
                         "/auth/refresh",
+                        "/auth/activate",
                         "/swagger-ui.html",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
-                        "/test/*"
+                        "/test/**"
         };
         private final String[] ADMIN = {
                         "/admin", "/admin/**",
