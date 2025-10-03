@@ -31,7 +31,10 @@ export default function ProfilePage() {
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-destructive">
+      <div
+        className="min-h-screen flex items-center justify-center
+          text-destructive"
+      >
         Failed to load profile.
       </div>
     );
@@ -40,16 +43,15 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen flex justify-center">
       <div className="w-full max-w-4xl p-6 space-y-6">
-
         {/* Avatar and Basic Info */}
         <div className="flex flex-row items-center space-x-4">
           <Avatar className="h-15 w-15">
             <AvatarImage
               src={
                 profile?.avatarUrl ??
-                `https://ui-avatars.com/api/?name=${profile?.fullname || profile?.username}&background=random`
+                `https://ui-avatars.com/api/?name=${profile?.username}&background=random`
               }
-              alt={profile?.fullname || profile?.username}
+              alt={profile?.username}
             />
             <AvatarFallback>
               {profile?.username?.slice(0, 2).toUpperCase()}
@@ -57,28 +59,26 @@ export default function ProfilePage() {
           </Avatar>
 
           <div className="flex flex-col items-center">
-            <div
-              className="text-3xl font-semibold"
-            >
-              {profile?.fullname || profile?.username}
-            </div>
+            <div className="text-3xl font-semibold">{profile?.username}</div>
             <div className="text-sm text-muted-foreground">
               {profile?.email}
             </div>
           </div>
         </div>
 
-        <Tabs defaultValue="profile" variant="underline" className="w-full space-y-5 ">
-          <TabsList >
+        <Tabs
+          defaultValue="profile"
+          variant="underline"
+          className="w-full space-y-5"
+        >
+          <TabsList>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="account">Account</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile" className="space-y-5">
-            <ProfileCard
-              profile={profile}
-            />
+            <ProfileCard profile={profile} />
           </TabsContent>
 
           <TabsContent value="account" className="space-y-5">
@@ -90,6 +90,6 @@ export default function ProfilePage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div >
+    </div>
   );
 }

@@ -3,8 +3,8 @@ spring:
     import: optional:file:.env.properties
   datasource:
     url: jdbc:mysql://localhost:3306/trade_app
-    username: root
-    password: 123456
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
