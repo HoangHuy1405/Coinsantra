@@ -28,6 +28,7 @@ public class DataSeeder {
                         .email("admin@example.com")
                         .password(passwordEncoder.encode("admin")) // Never store plain passwords
                         .roles(Set.of(Role.ADMIN, Role.TRADER)) // Assuming you have Role enum with ADMIN
+                        .phoneNum("1234567890")
                         .enabled(true)
                         .accountLocked(false)
                         .build();

@@ -1,5 +1,6 @@
 package com.web.TradeApp.service;
 
+import java.io.Console;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +35,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        System.out.println("User phoneNum:" + user.getPhoneNum());
+
         String avatarUrl = buildAvatarUrl(user.getProfilePhotoPublicId(), user.getProfilePhotoVersion());
 
         return toDto(user, avatarUrl);
@@ -66,7 +69,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             user.setLastName(req.lastName().trim());
         }
         if (req.firstName() != null) {
-            user.setLastName(req.lastName().trim());
+            user.setFirstName(req.firstName().trim());
         }
         if (req.description() != null) {
             user.setDescription(req.description().trim());

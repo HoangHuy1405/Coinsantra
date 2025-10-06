@@ -54,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
                 .username(request.username())
                 .email(request.email())
                 .password(hashPassword)
+                .phoneNum(request.phoneNum())
                 .accountLocked(false)
                 .enabled(false)
                 .roles(Set.of(Role.TRADER))

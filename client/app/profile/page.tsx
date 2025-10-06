@@ -1,25 +1,17 @@
 "use client";
 
 import { useUserProfile } from "@/hooks/useUserProfile";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardTitle,
-  CardDescription,
-} from "@/app/ui/shadcn/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/ui/shadcn/avatar";
-import { Badge } from "@/app/ui/shadcn/badge";
-import { Separator } from "@/app/ui/shadcn/separator";
 import { Tabs, TabsList, TabsTrigger } from "../ui/shadcn/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { motion, AnimatePresence } from "framer-motion";
 import ProfileCard from "./ProfileCard";
 import AccountCard from "./AccountCard";
 import SecurityCard from "./SecurityCard";
+import { useUpdateProfile } from "@/hooks/useUserUpdateProfile";
 
 export default function ProfilePage() {
   const { data: profile, isLoading, error } = useUserProfile();
+  const { mutate: updateProfile, isPending } = useUpdateProfile();
 
   if (isLoading) {
     return (
@@ -78,7 +70,10 @@ export default function ProfilePage() {
           </TabsList>
 
           <TabsContent value="profile" className="space-y-5">
-            <ProfileCard profile={profile} />
+            <ProfileCard
+              profile={profile}
+              onSave={(updatedProfile) => updateProfile(updatedProfile)}
+            />
           </TabsContent>
 
           <TabsContent value="account" className="space-y-5">
