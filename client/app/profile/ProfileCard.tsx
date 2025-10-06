@@ -26,7 +26,6 @@ export default function ProfileCard({ profile, onSave }: ProfileCardProps) {
     const [isSaving, setIsSaving] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
 
-    // 🔄 Khi prop profile thay đổi (sau khi update thành công/refetch), reset lại form
     useEffect(() => {
         setForm(profile);
         setIsDirty(false);
@@ -44,7 +43,7 @@ export default function ProfileCard({ profile, onSave }: ProfileCardProps) {
         if (!onSave) return;
         setIsSaving(true);
         try {
-            await onSave(form); // Gọi hàm updateProfile ở parent (có toast, invalidate query)
+            await onSave(form);
             setIsSaving(false);
             setIsDirty(false);
             setIsSaved(true);
