@@ -52,7 +52,11 @@ export default function LoginForm() {
       toast.success("Logged in successfully");
     } catch (error: any) {
       console.error("Login failed:", error);
-      toast.error("Failed to login. Please try again.");
+      if (error.status === 401) {
+        toast.error("Invalid username or password");
+      } else {
+        toast.error("Failed to login. Please try again.");
+      }
     }
   };
 

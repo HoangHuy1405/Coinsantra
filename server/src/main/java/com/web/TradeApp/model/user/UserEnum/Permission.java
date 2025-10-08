@@ -1,4 +1,4 @@
-package com.web.TradeApp.model.user;
+package com.web.TradeApp.model.user.UserEnum;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

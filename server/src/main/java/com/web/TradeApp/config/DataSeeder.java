@@ -1,7 +1,7 @@
 package com.web.TradeApp.config;
 
-import com.web.TradeApp.model.user.Role;
 import com.web.TradeApp.model.user.User;
+import com.web.TradeApp.model.user.UserEnum.Role;
 import com.web.TradeApp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

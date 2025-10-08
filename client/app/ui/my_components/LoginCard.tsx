@@ -7,12 +7,15 @@ import RegisterForm from "./RegisterForm";
 import { Separator } from "../shadcn/separator";
 import { motion, AnimatePresence } from "framer-motion";
 import { GithubButton, GoogleButton } from "./OAuth2Button";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 
 type mode = "login" | "register";
 
 export default function LoginCard() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<mode>("login");
 
@@ -24,6 +27,17 @@ export default function LoginCard() {
       setMode("login");
     }
   }, [searchParams]);
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signIn("google", { redirect: false, callbackUrl: "/" });
+      router.push("/");
+      toast.success("Logged in successfully");
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      toast.error("Failed to login. Please try again.");
+    }
+  };
 
   return (
     <Card className="w-full max-w-sm">
@@ -76,7 +90,7 @@ export default function LoginCard() {
             </div>
 
             <div className="flex justify-center gap-4 mt-3">
-              <GoogleButton onClick={() => {}} />
+              <GoogleButton onClick={handleGoogleLogin} />
               <GithubButton onClick={() => {}} />
             </div>
           </CardContent>

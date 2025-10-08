@@ -1,4 +1,4 @@
-package com.web.TradeApp.model.user;
+package com.web.TradeApp.model.user.UserEnum;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -10,7 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import static com.web.TradeApp.model.user.Permission.*;
+import static com.web.TradeApp.model.user.UserEnum.Permission.*;
 
 // each role can have multiple permission
 @RequiredArgsConstructor

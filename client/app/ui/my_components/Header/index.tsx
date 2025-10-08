@@ -34,13 +34,12 @@ export default function Header() {
         ${scrolled ? "border-b border-border" : "border-b border-transparent"}`}
     >
       <div className="flex flex-col">
-
-        <div className=" sticky top-0 border-border">
+        <div className="sticky top-0 border-border">
           <TickerTape />
         </div>
         <div
-          className="container mx-auto flex h-16 items-center justify-between px-4
-          md:px-8"
+          className="container mx-auto flex h-16 items-center justify-between
+            px-4 md:px-8"
         >
           {/* Left: Logo + Nav */}
           <div className="flex items-center gap-6">
@@ -65,15 +64,17 @@ export default function Header() {
               <div className="flex items-center gap-3">
                 {/* User Avatar + Name */}
                 <div className="flex items-center gap-2">
-                  <UserAvatar
-                    avatarUrl={session.user.avatarUrl}
-                    fullname={session.user.fullname}
-                    username={session.user.username}
-                    size={32}
-                  />
-                  <span className="text-sm font-medium">
-                    <Link href="/profile">{session.user.username}</Link>
-                  </span>
+                  <Link href="/profile">
+                    <UserAvatar
+                      avatarUrl={session.user.avatarUrl}
+                      fullname={session.user.fullname}
+                      username={session.user.username}
+                      size={32}
+                    />
+                    <span className="text-sm font-medium">
+                      {session.user.username}
+                    </span>
+                  </Link>
                 </div>
 
                 {/* Sign Out Button */}
@@ -98,7 +99,7 @@ export default function Header() {
             <ModeToggle />
             <button
               className="sm:hidden inline-flex items-center justify-center
-              rounded-md p-2 hover:bg-accent"
+                rounded-md p-2 hover:bg-accent"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? (

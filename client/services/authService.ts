@@ -1,4 +1,4 @@
-import api, { authApi } from "@/lib/api";
+import api from "@/lib/api";
 import { ApiResponse } from "@/lib/type";
 
 // ---------- Types ----------
@@ -50,13 +50,19 @@ export const AuthService = {
       "/auth/login",
       payload,
     );
-    console.log(data);
     return data;
   },
 
   async refresh(): Promise<ApiResponse<RefreshResponse>> {
     const { data } =
       await api.post<ApiResponse<RefreshResponse>>("/auth/refresh");
+    return data;
+  },
+  async loginGoogle(idToken: String): Promise<ApiResponse<LoginResponse>> {
+    const { data } = await api.post<ApiResponse<LoginResponse>>(
+      "auth/social/google",
+      { idToken },
+    );
     return data;
   },
   // doesnt work

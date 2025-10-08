@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.web.TradeApp.model.BaseEntity;
+import com.web.TradeApp.model.user.UserEnum.*;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -33,7 +34,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User extends BaseEntity {
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = true)
     private String username;
 
     @Column(nullable = false)
@@ -42,7 +43,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(nullable = true) // nullable for Oauth users
     private String password;
 
     @Column(unique = true, nullable = false)
@@ -73,6 +74,9 @@ public class User extends BaseEntity {
     private boolean accountLocked;
     // disable/enable user account
     private boolean enabled;
+
+    @Column(nullable = false)
+    private AuthProvider authProvider; // "local", "google", "github"..
 
     public String getFullName() {
         return firstName + " " + lastName;

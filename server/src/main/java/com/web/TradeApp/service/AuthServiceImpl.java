@@ -19,9 +19,10 @@ import com.web.TradeApp.dto.AuthDTO.LoginResponse;
 import com.web.TradeApp.dto.AuthDTO.RegisterRequest;
 import com.web.TradeApp.dto.AuthDTO.RegisterResponse;
 import com.web.TradeApp.exception.UserNotFoundException;
-import com.web.TradeApp.model.user.Role;
 import com.web.TradeApp.model.user.Token;
 import com.web.TradeApp.model.user.User;
+import com.web.TradeApp.model.user.UserEnum.AuthProvider;
+import com.web.TradeApp.model.user.UserEnum.Role;
 import com.web.TradeApp.repository.TokenRepository;
 import com.web.TradeApp.repository.UserRepository;
 import com.web.TradeApp.service.interfaces.AuthService;
@@ -58,6 +59,7 @@ public class AuthServiceImpl implements AuthService {
                 .accountLocked(false)
                 .enabled(false)
                 .roles(Set.of(Role.TRADER))
+                .authProvider(AuthProvider.CREDENTIALS)
                 .build();
 
         userRepository.save(user);

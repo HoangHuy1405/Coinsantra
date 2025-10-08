@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.net.URI;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -32,6 +33,8 @@ public class GlobalExceptionHandler {
             IdInvalidException.class
     })
     public ProblemDetail handleNotFoundException(Exception ex) {
+        ex.printStackTrace();
+
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problem.setTitle("Resource Not Found");
         problem.setDetail(ex.getMessage());
@@ -42,6 +45,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail handleBadCredentials(BadCredentialsException ex) {
+        ex.printStackTrace();
+
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("Authentication failed");
         problem.setDetail("Invalid username or password");
@@ -51,6 +56,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationException(MethodArgumentNotValidException ex) {
+        ex.printStackTrace();
+
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Validation Failed");
 
@@ -68,7 +75,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        // Log full exception internally for developers
         ex.printStackTrace();
 
         String cause = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : "";
@@ -101,6 +107,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DisabledException.class)
     public ProblemDetail handleDisabledAccount(DisabledException ex) {
+        ex.printStackTrace();
+
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         problem.setTitle("Account Disabled");
         problem.setDetail("Your account has been disabled. Please verify before continue.");
@@ -112,6 +120,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(
             AuthorizationDeniedException ex, HttpServletRequest request) {
+        ex.printStackTrace();
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("title", "Access Denied");
@@ -123,8 +132,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
     }
 
+    @ExceptionHandler(InvalidGoogleTokenException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidGoogleToken(InvalidGoogleTokenException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", HttpStatus.UNAUTHORIZED.value(),
+                "error", "Unauthorized",
+                "message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(GoogleUserCreationException.class)
+    public ResponseEntity<Map<String, Object>> handleUserCreation(GoogleUserCreationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", HttpStatus.BAD_REQUEST.value(),
+                "error", "User Creation Failed",
+                "message", ex.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGenericException(Exception ex) {
+        ex.printStackTrace();
+
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problem.setTitle("Internal Server Error");
         problem.setDetail(ex.getMessage());

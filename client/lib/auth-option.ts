@@ -1,6 +1,11 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
 import { AuthService } from "@/services/authService";
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
+
 export const authOptions: NextAuthOptions = {
   debug: true,
   providers: [
@@ -22,23 +27,46 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
+    GoogleProvider({
+      clientId: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
+    }),
   ],
 
   callbacks: {
     // Requests to /api/auth/signin, /api/auth/session
     // and calls to getSession(), getServerSession(),
     // useSession() will invoke this function
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
-        token.accessToken = user.accessToken;
-        token.user = {
-          id: user.id,
-          email: user.email!,
-          username: user.username,
-          fullname: user.fullname,
-          avatarUrl: user.avatarUrl,
-          roles: user.roles,
-        };
+    async jwt({ token, user, account, trigger, session }) {
+      if (account && user) {
+        if (account.provider === "google") {
+          // Google login
+          const res = await AuthService.loginGoogle(account.id_token!);
+          const userRes = res.data?.user;
+          const userAccessToken = res.data?.accessToken;
+          if (userRes) {
+            token.accessToken = userAccessToken;
+            token.user = {
+              id: userRes.id,
+              email: userRes.email!,
+              username: userRes.username,
+              fullname: userRes.fullname,
+              avatarUrl: userRes.avatarUrl,
+              roles: userRes.roles,
+            };
+          }
+        } else {
+          // Credentials Login (email, password)
+          token.accessToken = user.accessToken;
+          token.user = {
+            id: user.id,
+            email: user.email!,
+            username: user.username,
+            fullname: user.fullname,
+            avatarUrl: user.avatarUrl,
+            roles: user.roles,
+          };
+        }
       }
       // call the update() function from getSession() to trigger this
       if (trigger === "update" && session) {
