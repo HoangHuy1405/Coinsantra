@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -21,7 +20,7 @@ import com.web.TradeApp.dto.AuthDTO.LoginRequest;
 import com.web.TradeApp.dto.AuthDTO.LoginResponse;
 import com.web.TradeApp.dto.AuthDTO.RegisterRequest;
 import com.web.TradeApp.dto.AuthDTO.RegisterResponse;
-import com.web.TradeApp.exception.FunctionErrorException;
+import com.web.TradeApp.exception.ConflictException;
 import com.web.TradeApp.exception.InvalidTokenException;
 import com.web.TradeApp.exception.UserNotFoundException;
 import com.web.TradeApp.model.user.Token;
@@ -62,13 +61,11 @@ public class AuthServiceImpl implements AuthService {
         if (optUser.isPresent()) {
             user = optUser.get();
             if (user.isEnabled()) {
-                throw new DataIntegrityViolationException("Email already taken. Pls try another one");
+                throw new ConflictException("Email already taken. Please try another one");
             }
             user.getTokens().clear();
 
             // override old value
-            user.setFirstName(request.firstName());
-            user.setLastName(request.lastName());
             user.setUsername(request.username());
             user.setPassword(hashPassword);
             user.setAccountLocked(false);
@@ -78,8 +75,6 @@ public class AuthServiceImpl implements AuthService {
 
         } else {
             user = User.builder()
-                    .firstName(request.firstName())
-                    .lastName(request.lastName())
                     .username(request.username())
                     .email(request.email())
                     .password(hashPassword)
@@ -119,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidTokenException("Activation code expired or already used");
         }
         if (!activateCode.getToken().equals(codeRequest)) {
-            throw new RuntimeException("Invalid verification code");
+            throw new InvalidTokenException("Invalid verification code");
         }
 
         user.setEnabled(true);
@@ -138,7 +133,7 @@ public class AuthServiceImpl implements AuthService {
         // send email
         emailService.sendConfirmationEmail(
                 user.getEmail(),
-                user.getFullName(),
+                user.getUsername(),
                 newToken,
                 "Account activation");
 

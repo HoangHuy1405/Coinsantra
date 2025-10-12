@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.time.Instant;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({
@@ -75,6 +77,7 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
 
         String cause = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : "";
+        // log.info(cause, ex);
         String detailMessage = "A data conflict occurred.";
 
         // Extract a human-readable cause from the DB message (basic heuristic)
@@ -98,6 +101,15 @@ public class GlobalExceptionHandler {
         problem.setTitle("Data Integrity Violation");
         problem.setDetail(detailMessage);
         problem.setType(URI.create("https://api.example.com/errors/conflict"));
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ProblemDetail handleConflict(ConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problem.setTitle("Conflict");
+        problem.setDetail(ex.getMessage());
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

@@ -1,9 +1,26 @@
 "use client";
 
+import { useLoadingStore } from "@/lib/loading-store";
 import { queryClient } from "@/lib/react-query-client";
-import { QueryClientProvider } from "@tanstack/react-query";
-// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
+import {
+  QueryClientProvider,
+  useIsFetching,
+  useIsMutating,
+} from "@tanstack/react-query";
+import { useEffect } from "react";
+
+function GlobalReactQueryListener() {
+  const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
+  const { startLoading, stopLoading } = useLoadingStore();
+
+  useEffect(() => {
+    if (isFetching > 0 || isMutating > 0) startLoading();
+    else stopLoading();
+  }, [isFetching, isMutating, startLoading, stopLoading]);
+
+  return null;
+}
 
 export default function QueryProvider({
   children,
@@ -12,6 +29,7 @@ export default function QueryProvider({
 }) {
   return (
     <QueryClientProvider client={queryClient}>
+      <GlobalReactQueryListener />
       {children}
       {/* Optional: DevTools for debugging */}
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}

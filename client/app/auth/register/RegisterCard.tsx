@@ -17,7 +17,7 @@ export default function RegisterCard() {
 
         <p className="text-center text-sm text-muted-foreground mt-4">
           Already have an account?{" "}
-          <Link href="/login" className="text-foreground hover:underline">
+          <Link href="/auth/login" className="text-foreground hover:underline">
             Login
           </Link>
         </p>

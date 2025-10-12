@@ -18,15 +18,7 @@ import { Button } from "../../ui/shadcn/button";
 export const registerSchema = z
   .object({
     username: z.string().trim().min(1, { message: "Username is required" }),
-    firstName: z.string().trim().min(1, { message: "First name is required" }),
-    lastName: z.string().trim().min(1, { message: "Last name is required" }),
     email: z.email({ message: "Invalid email" }),
-    phoneNum: z
-      .string()
-      .trim()
-      .regex(/^\+?[0-9\s-]{7,15}$/, {
-        message: "Invalid phone number format",
-      }),
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters" }),
@@ -48,10 +40,7 @@ export default function RegisterForm() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
-      firstName: "",
-      lastName: "",
       email: "",
-      phoneNum: "",
       password: "",
       confirm: "",
     },
@@ -71,38 +60,12 @@ export default function RegisterForm() {
       <form onSubmit={form.handleSubmit(handleRegister)} className="space-y-4">
         <FormField
           control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>First name</FormLabel>
-              <FormControl>
-                <Input placeholder="John" {...field}></Input>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last name</FormLabel>
-              <FormControl>
-                <Input placeholder="Paul" {...field}></Input>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="abc" {...field}></Input>
+                <Input placeholder="johnPaul123" {...field}></Input>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -127,28 +90,12 @@ export default function RegisterForm() {
         />
         <FormField
           control={form.control}
-          name="phoneNum"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone Number</FormLabel>
-              <FormControl>
-                <Input placeholder="xxxxxxxx" {...field}></Input>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput
-                  placeholder="••••••••"
-                  {...field}
-                ></PasswordInput>
+                <PasswordInput {...field}></PasswordInput>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -161,10 +108,7 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel>Confirm password</FormLabel>
               <FormControl>
-                <PasswordInput
-                  placeholder="••••••••"
-                  {...field}
-                ></PasswordInput>
+                <PasswordInput {...field}></PasswordInput>
               </FormControl>
               <FormMessage />
             </FormItem>
