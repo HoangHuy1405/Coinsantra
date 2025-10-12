@@ -17,8 +17,8 @@ export default function useActivateAcc() {
       activateCode: string;
     }) => AuthService.activate(urlToken, activateCode),
     onSuccess: () => {
-      toast.success("Account activated! You can now log in.");
       router.push("/auth/login");
+      toast.success("Account activated! You can now log in.");
     },
     onError: (error: any) => {
       const message =

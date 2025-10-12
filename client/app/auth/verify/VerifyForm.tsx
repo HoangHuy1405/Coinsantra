@@ -34,7 +34,7 @@ export default function VerifyForm() {
   useEffect(() => {
     if (!urlToken) {
       toast.error("Invalid verification link. Please register again.");
-      router.replace("/register");
+      router.replace("/auth/register");
     }
   }, [urlToken, router]);
 

@@ -63,8 +63,8 @@ export default function Header() {
             {status === "authenticated" ? (
               <div className="flex items-center gap-3">
                 {/* User Avatar + Name */}
-                <div className="flex items-center gap-2">
-                  <Link href="/profile">
+                <Link href="/profile">
+                  <div className="flex items-center gap-2">
                     <UserAvatar
                       avatarUrl={session.user.avatarUrl}
                       fullname={session.user.fullname}
@@ -74,8 +74,8 @@ export default function Header() {
                     <span className="text-sm font-medium">
                       {session.user.username}
                     </span>
-                  </Link>
-                </div>
+                  </div>
+                </Link>
 
                 {/* Sign Out Button */}
                 <Button

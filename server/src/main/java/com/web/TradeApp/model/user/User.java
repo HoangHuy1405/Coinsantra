@@ -40,10 +40,10 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String lastName;
 
     @Column(nullable = true) // nullable for Oauth users

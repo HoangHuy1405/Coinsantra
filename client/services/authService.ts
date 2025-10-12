@@ -6,10 +6,7 @@ import { ApiResponse } from "@/lib/type";
 export type RegisterRequest = {
   username: string;
   password: string;
-  firstName: string;
-  lastName: string;
   email: string;
-  phoneNum: string;
 };
 
 export type LoginRequest = {
