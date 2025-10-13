@@ -19,6 +19,8 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  console.log(session?.user);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20); // cuộn xuống 20px thì bật border

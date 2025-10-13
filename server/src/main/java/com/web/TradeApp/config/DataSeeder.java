@@ -1,9 +1,10 @@
 package com.web.TradeApp.config;
 
-import com.web.TradeApp.model.user.User;
-import com.web.TradeApp.model.user.UserEnum.AuthProvider;
-import com.web.TradeApp.model.user.UserEnum.Role;
-import com.web.TradeApp.repository.UserRepository;
+import com.web.TradeApp.feature.user.auth.constant.AuthProvider;
+import com.web.TradeApp.feature.user.auth.constant.Role;
+import com.web.TradeApp.feature.user.entity.User;
+import com.web.TradeApp.feature.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

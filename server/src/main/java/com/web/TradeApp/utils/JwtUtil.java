@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
-import com.web.TradeApp.dto.AuthDTO.LoginResponse;
+import com.web.TradeApp.feature.user.auth.dto.LoginResponse;
 
 import lombok.RequiredArgsConstructor;
 
