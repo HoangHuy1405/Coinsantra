@@ -46,6 +46,8 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         // Extract user info from payload
         String email = payload.getEmail();
         String fullname = (String) payload.get("name");
+        String firstName = (String) payload.get("given_name");
+        String lastName = (String) payload.get("family_name");
         String avatarUrl = (String) payload.get("picture");
 
         if (email == null || email.isEmpty()) {
@@ -57,13 +59,13 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         User user = userOpt.isPresent() ? userOpt.get() : null;
         if (!userOpt.isPresent()) {
             // New user -> create user
-            user = this.createGoogleUser(email, fullname, avatarUrl);
+            user = this.createGoogleUser(email, fullname, firstName, lastName, avatarUrl);
             if (user == null) {
                 throw new GoogleUserCreationException("Failed to create new Google user");
             }
         } else {
             // Exisiting user -> update info
-            this.syncGoogleProfile(email, fullname, avatarUrl, user);
+            this.syncGoogleProfile(email, fullname, firstName, lastName, avatarUrl, user);
         }
         LoginResponse response = authService.createLoginRes(user, email);
 
@@ -88,11 +90,7 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         return verifiedIdToken.getPayload();
     }
 
-    private User createGoogleUser(String email, String fullname, String avatarUrl) {
-        String[] parts = fullname.split(" ", 2);
-        String firstName = parts.length > 0 ? parts[0] : fullname;
-        String lastName = parts.length > 1 ? parts[1] : "";
-
+    private User createGoogleUser(String email, String fullname, String firstName, String lastName, String avatarUrl) {
         User user = User.builder()
                 .firstName(firstName)
                 .lastName(lastName)
@@ -107,7 +105,8 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         return userRepository.save(user);
     }
 
-    private void syncGoogleProfile(String email, String fullname, String avatarUrl, User userDb) {
+    private void syncGoogleProfile(String email, String fullname, String firstName, String lastName, String avatarUrl,
+            User userDb) {
         boolean updated = false;
 
         // only update avatar url
@@ -120,6 +119,14 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         // }
         if (!Objects.equals(userDb.getProfilePhotoUrl(), avatarUrl)) {
             userDb.setProfilePhotoUrl(avatarUrl);
+            updated = true;
+        }
+        if (!Objects.equals(userDb.getFirstName(), firstName)) {
+            userDb.setFirstName(firstName);
+            updated = true;
+        }
+        if (!Objects.equals(userDb.getLastName(), lastName)) {
+            userDb.setFirstName(lastName);
             updated = true;
         }
         if (updated) {

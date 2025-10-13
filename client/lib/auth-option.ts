@@ -7,6 +7,7 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   debug: true,
   providers: [
     CredentialsProvider({
@@ -41,19 +42,24 @@ export const authOptions: NextAuthOptions = {
       if (account && user) {
         if (account.provider === "google") {
           // Google login
-          const res = await AuthService.loginGoogle(account.id_token!);
-          const userRes = res.data?.user;
-          const userAccessToken = res.data?.accessToken;
-          if (userRes) {
-            token.accessToken = userAccessToken;
-            token.user = {
-              id: userRes.id,
-              email: userRes.email!,
-              username: userRes.username,
-              fullname: userRes.fullname,
-              avatarUrl: userRes.avatarUrl,
-              roles: userRes.roles,
-            };
+          try {
+            const res = await AuthService.loginGoogle(account.id_token!);
+            const userRes = res.data?.user;
+            const userAccessToken = res.data?.accessToken;
+            if (userRes) {
+              token.accessToken = userAccessToken;
+              token.user = {
+                id: userRes.id,
+                email: userRes.email!,
+                username: userRes.username,
+                fullname: userRes.fullname,
+                avatarUrl: userRes.avatarUrl,
+                roles: userRes.roles,
+              };
+            }
+          } catch (err) {
+            console.error("Google login failed:", err);
+            throw new Error("GoogleLoginFailed");
           }
         } else {
           // Credentials Login (email, password)

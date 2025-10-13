@@ -13,7 +13,6 @@ export function useSignUp() {
 
     onSuccess: (res) => {
       if (res.statusCode === 201) {
-        toast.success("🎉 Registration successful! Please log in.");
         router.push(`verify?token=${res.data?.urlToken}`);
       } else {
         toast.error(res.message || "Registration failed.");
@@ -24,7 +23,7 @@ export function useSignUp() {
       console.log(error);
       const message =
         error?.response?.data?.detail || "Something went wrong. Try again.";
-      toast.error(`❌ ${message}`);
+      toast.error(`${message}`);
     },
   });
 }
