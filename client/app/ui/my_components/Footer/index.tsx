@@ -9,10 +9,11 @@ import {
 } from "./footerData";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import Copyright from "./Copyright";
 
 export default function Footer({ className }: { className?: string }) {
   return (
-    <footer className="py-20">
+    <footer className="pt-20">
       {/* <div className="container"> */}
       <div
         className={cn(
@@ -68,23 +69,9 @@ export default function Footer({ className }: { className?: string }) {
           ))}
         </div>
       </div>
-      <div
-        className={cn(
-          `text-muted-foreground mt-8 flex flex-col justify-between gap-4
-            border-t py-8 text-xs font-medium md:flex-row md:items-center
-            md:text-left`,
-          className,
-        )}
-      >
-        <p className="order-2 lg:order-1">{copyright}</p>
-        <ul className="order-1 flex flex-col gap-2 md:order-2 md:flex-row">
-          {legalLinks.map((link, idx) => (
-            <li key={idx} className="hover:text-primary">
-              <a href={link.href}> {link.name}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Copyright
+        className={className}
+      />
       {/* </div> */}
     </footer>
   );

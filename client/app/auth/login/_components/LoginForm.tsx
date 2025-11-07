@@ -7,12 +7,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/shadcn/form";
-import { Input, PasswordInput } from "../../ui/shadcn/input";
+} from "../../../ui/shadcn/form";
+import { Input, PasswordInput } from "../../../ui/shadcn/input";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../../ui/shadcn/button";
+import { Button } from "../../../ui/shadcn/button";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";

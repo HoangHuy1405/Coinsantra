@@ -11,9 +11,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/shadcn/form";
-import { Input, PasswordInput } from "../../ui/shadcn/input";
-import { Button } from "../../ui/shadcn/button";
+} from "../../../ui/shadcn/form";
+import { Input, PasswordInput } from "../../../ui/shadcn/input";
+import { Button } from "../../../ui/shadcn/button";
 
 export const registerSchema = z
   .object({

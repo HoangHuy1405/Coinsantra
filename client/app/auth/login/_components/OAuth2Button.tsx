@@ -1,7 +1,6 @@
 import { FcGoogle } from "react-icons/fc"
 import { FaGithub } from "react-icons/fa"
-import { Button } from "../shadcn/button"
-
+import { Button } from "../../../ui/shadcn/button"
 
 export function GoogleButton({ onClick }: { onClick: () => void }) {
     return (

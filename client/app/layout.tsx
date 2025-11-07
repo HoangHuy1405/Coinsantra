@@ -9,6 +9,7 @@ import QueryProvider from "@/context/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import { GlobalLoader } from "./ui/my_components/GlobalLoader";
 import { useLoadingStore } from "@/lib/loading-store";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
@@ -16,6 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const { isLoading } = useLoadingStore();
+
+  const pathname = usePathname();
+
+  const noRootLayoutRoutes = ["/dashboard"];
+
+  const shouldHideLayout = noRootLayoutRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -30,13 +39,19 @@ export default function RootLayout({
           <SessionProvider>
             <QueryProvider>
               <GlobalLoader show={isLoading} />
-              <Header />
-              <main
-                className="flex flex-col justify-center overflow-x-hidden py-5"
-              >
-                {children}
-              </main>
-              <Footer className="px-20" />
+              {shouldHideLayout ? (
+                children
+              ) : (
+                <>
+                  <Header />
+                  <main
+                    className="flex flex-col justify-center overflow-x-hidden py-5"
+                  >
+                    {children}
+                  </main>
+                  <Footer className="px-20" />
+                </>
+              )}
             </QueryProvider>
           </SessionProvider>
         </ThemeProvider>

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/shadcn/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/shadcn/card";
 import RegisterForm from "./RegisterForm";
+
 
 export default function RegisterCard() {
   return (

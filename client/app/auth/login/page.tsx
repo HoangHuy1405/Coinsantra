@@ -1,4 +1,4 @@
-import LoginCard from "./LoginCard";
+import LoginCard from "./_components/LoginCard";
 
 export default function page() {
   return (

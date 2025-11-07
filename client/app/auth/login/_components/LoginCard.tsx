@@ -1,20 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/shadcn/card";
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/shadcn/card";
 import LoginForm from "./LoginForm";
-import { Separator } from "../../ui/shadcn/separator";
+import { Separator } from "../../../ui/shadcn/separator";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  GithubButton,
-  GoogleButton,
-} from "../../ui/my_components/OAuth2Button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
+import { GoogleButton, GithubButton } from "./OAuth2Button";
 
-type mode = "login" | "register";
 
 export default function LoginCard() {
   const router = useRouter();
@@ -66,7 +62,7 @@ export default function LoginCard() {
 
             <div className="flex justify-center gap-4 mt-3">
               <GoogleButton onClick={handleGoogleLogin} />
-              <GithubButton onClick={() => {}} />
+              <GithubButton onClick={() => { }} />
             </div>
           </CardContent>
         </motion.div>
