@@ -25,17 +25,23 @@ export default function AITradeStatus() {
 
   return (
     <Card className="w-full h-full border border-border shadow-sm bg-card">
+      {/* ---------- HEADER ---------- */}
       <CardHeader
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between"
+        className="flex flex-row flex-wrap items-center justify-between gap-3
+          max-[1000px]:flex-col max-[1000px]:items-start"
       >
-        <div className="flex items-center gap-3">
+        {/* Left side: Icon + Title */}
+        <div
+          className="flex items-center gap-3 w-full
+            max-[1000px]:justify-between"
+        >
           <div
             className="flex h-10 w-10 items-center justify-center rounded-full
-              bg-primary/10"
+              bg-primary/10 shrink-0"
           >
             <Bot className="h-5 w-5 text-primary" />
           </div>
-          <div>
+          <div className="flex flex-col">
             <CardTitle className="text-base font-semibold">AI Trade</CardTitle>
             <CardDescription className="text-sm text-muted-foreground">
               Automated trading assistant
@@ -43,8 +49,12 @@ export default function AITradeStatus() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mt-3 sm:mt-0">
-          <Label htmlFor="ai-switch" className="text-sm">
+        {/* Right side: Switch (drops below when <1000px) */}
+        <div
+          className="flex items-center gap-2 w-full max-[1000px]:justify-start
+            max-[1000px]:pt-2"
+        >
+          <Label htmlFor="ai-switch" className="text-sm whitespace-nowrap">
             {aiEnabled ? "Enabled" : "Disabled"}
           </Label>
           <Switch
@@ -55,9 +65,10 @@ export default function AITradeStatus() {
         </div>
       </CardHeader>
 
+      {/* ---------- CONTENT ---------- */}
       <CardContent className="space-y-5">
-        {/* Profit Overview */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Profit Overview (Hidden when <1000px) */}
+        <div className="grid grid-cols-2 gap-4 max-[1000px]:hidden">
           {/* Today */}
           <div className="rounded-xl border bg-muted/30 p-4">
             <p className="text-sm text-muted-foreground">Today's PnL</p>
@@ -103,7 +114,10 @@ export default function AITradeStatus() {
 
         {/* Active Strategies */}
         <div className="rounded-xl border bg-muted/30 p-4">
-          <div className="flex items-center justify-between">
+          <div
+            className="flex flex-col md:flex-row md:items-center
+              md:justify-between gap-3"
+          >
             <div>
               <p className="text-sm font-medium">Active Strategies</p>
               <p className="text-xs text-muted-foreground">3 bots running</p>
@@ -111,7 +125,7 @@ export default function AITradeStatus() {
             <Badge
               variant="secondary"
               className={cn(
-                "px-2 py-0.5 text-xs font-medium",
+                "px-2 py-0.5 text-xs font-medium w-fit",
                 aiEnabled
                   ? "bg-emerald-500/20 text-emerald-600"
                   : "bg-rose-500/20 text-rose-600",

@@ -36,7 +36,7 @@ export function MarketTable({
   return (
     <div
       className="overflow-hidden rounded-xl border border-border bg-card
-        shadow-sm"
+        shadow-sm h-full"
     >
       <div
         className="flex items-center justify-between p-4 border-b
