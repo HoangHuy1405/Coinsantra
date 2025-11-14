@@ -1,12 +1,14 @@
 import React from "react";
 import { TotalAssetCard } from "./_components/PortfolioTable/TotalAssetCard";
 import PortfolioAssetTable from "./_components/PortfolioTable/PortfolioAssetTable";
-import { MarketTable } from "@/app/ui/widgets/MarketTable";
 import ProfitLostAnalysis from "./_components/ProfitLostAnalysis";
 import AITradeStatus from "./_components/AITradeStatus";
 import PortfolioAllocationChart from "./_components/PortfolioAllocationChart";
 import ActivityHistoryTable from "@/app/ui/my_components/activity-history-table/ActivityHistoryTable";
 import { mockActivities } from "@/entities/mockActivities";
+import { SYMBOLS } from "@/app/ui/widgets/constant";
+import { MarketTable } from "@/app/ui/my_components/market-table/MarketTable";
+import { Link } from "lucide-react";
 
 export default function page() {
   return (
@@ -32,7 +34,7 @@ export default function page() {
       {/* Row 4: Market + AI Trade Status */}
       <div className="col-span-1 md:col-span-8 w-full">
         <MarketTable
-          symbols={["BTC", "ETH", "BNB", "DOGE", "TRX", "XRP"]}
+          symbols={SYMBOLS}
           showLimit={6}
           enableActions={true}
           enablePagination={false}

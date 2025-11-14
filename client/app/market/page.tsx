@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/shadcn/card";
 import { useLiveMarketStream } from "@/hooks/ws/useLiveMarketStream";
-import { MarketTable } from "../ui/widgets/MarketTable";
+import { MarketTable } from "../ui/my_components/market-table/MarketTable";
 import { SYMBOLS } from "../ui/widgets/constant";
+import TopBox from "./_components/TopBox";
 
 export default function MarketPage() {
   const tickers = useLiveMarketStream(SYMBOLS);
@@ -48,6 +48,7 @@ export default function MarketPage() {
         {/* --- Market Table --- */}
         <MarketTable
           symbols={SYMBOLS}
+          showLimit={-1}
           enableActions={true}
           enableSorting={true}
           enableSearch={true}
@@ -55,37 +56,5 @@ export default function MarketPage() {
         />
       </div>
     </main>
-  );
-}
-
-/* --- Helper component for Top Boxes --- */
-function TopBox({ title, coins }: { title: string; coins: any[] }) {
-  return (
-    <Card className="border border-border bg-card shadow-sm h-full">
-      <CardHeader>
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        {coins.length > 0 ? (
-          coins.map((c) => (
-            <div
-              key={c.symbol}
-              className="flex justify-between text-sm items-center"
-            >
-              <span className="font-medium">{c.symbol}</span>
-              <span
-                className={`font-semibold ${
-                  c.changePercent >= 0 ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {c.changePercent.toFixed(2)}%
-              </span>
-            </div>
-          ))
-        ) : (
-          <div className="text-muted-foreground text-sm">Loading...</div>
-        )}
-      </CardContent>
-    </Card>
   );
 }

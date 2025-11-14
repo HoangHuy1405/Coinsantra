@@ -5,10 +5,10 @@ import Link from "next/link";
 import { ArrowUpRight, ArrowDownRight, Info, TrendingUp } from "lucide-react";
 import { Button } from "@/app/ui/shadcn/button";
 import { useLiveMarketStream } from "@/hooks/ws/useLiveMarketStream";
-import { MarketSparkline } from "../my_components/charts/MarketSparkline";
-import { COIN_LOGOS } from "./constant";
+import { MarketSparkline } from "../charts/MarketSparkline";
+import { COIN_LOGOS } from "../../widgets/constant";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "../my_components/data-table/data-table";
+import { DataTable } from "../data-table/data-table";
 import { useMemo } from "react";
 
 interface MarketRow {

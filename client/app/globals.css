@@ -177,3 +177,246 @@
     height: 100% !important;
   }
 }
+
+/* ===========================================
+   AG GRID – Quartz Theme Override (Shadcn)
+   =========================================== */
+
+.ag-theme-quartz {
+  /* Core colors */
+  --ag-background-color: var(--card) !important;
+  --ag-foreground-color: var(--card-foreground) !important;
+  --ag-border-color: var(--border) !important;
+
+  /* Header */
+  --ag-header-background-color: var(--muted) !important;
+  --ag-header-foreground-color: var(--foreground) !important;
+  --ag-header-cell-hover-background-color: color-mix(
+    in oklch,
+    var(--muted) 90%,
+    var(--primary)
+  ) !important;
+
+  /* Rows */
+  --ag-odd-row-background-color: var(--card) !important;
+  --ag-row-hover-color: color-mix(
+    in oklch,
+    var(--card) 92%,
+    var(--primary)
+  ) !important;
+  --ag-selected-row-background-color: color-mix(
+    in oklch,
+    var(--primary) 12%,
+    var(--card)
+  ) !important;
+
+  /* Sizing */
+  --ag-grid-size: 8px !important;
+  --ag-row-height: 60px !important;
+  --ag-header-height: 58px !important;
+  --ag-list-item-height: 60px !important;
+
+  /* Typography */
+  --ag-font-size: 15px !important;
+  --ag-font-family: var(--font-sans) !important;
+
+  /* Borders */
+  --ag-borders: solid 1px !important;
+  --ag-row-border-style: solid !important;
+  --ag-row-border-width: 1px !important;
+  --ag-row-border-color: var(--border) !important;
+
+  /* Misc */
+  --ag-cell-horizontal-padding: 16px !important;
+  --ag-wrapper-border-radius: 12px !important;
+}
+
+/* Force background colors with direct selectors */
+.ag-theme-quartz .ag-root-wrapper {
+  background-color: var(--card) !important;
+}
+
+.ag-theme-quartz .ag-root,
+.ag-theme-quartz .ag-body-viewport {
+  background-color: var(--card) !important;
+}
+
+.ag-theme-quartz .ag-header {
+  background-color: var(--muted) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.ag-theme-quartz .ag-row {
+  background-color: var(--card) !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-size: 15px !important;
+}
+
+.ag-theme-quartz .ag-cell {
+  color: var(--card-foreground) !important;
+}
+
+/* Dark mode overrides */
+.dark .ag-theme-quartz {
+  --ag-background-color: var(--card) !important;
+  --ag-foreground-color: var(--card-foreground) !important;
+  --ag-border-color: var(--border) !important;
+
+  --ag-header-background-color: color-mix(
+    in oklch,
+    var(--card) 96%,
+    var(--muted)
+  ) !important;
+  --ag-header-foreground-color: var(--foreground) !important;
+
+  --ag-odd-row-background-color: var(--card) !important;
+  --ag-row-hover-color: color-mix(
+    in oklch,
+    var(--card) 88%,
+    var(--primary)
+  ) !important;
+  --ag-selected-row-background-color: color-mix(
+    in oklch,
+    var(--primary) 18%,
+    var(--card)
+  ) !important;
+
+  --ag-row-border-color: var(--border) !important;
+}
+
+.dark .ag-theme-quartz .ag-header {
+  background-color: color-mix(
+    in oklch,
+    var(--card) 96%,
+    var(--muted)
+  ) !important;
+}
+
+.dark .ag-theme-quartz .ag-header-cell-label {
+  color: var(--foreground) !important;
+}
+.dark .ag-theme-quartz .ag-paging-panel {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+}
+
+/* Header styling */
+.ag-theme-quartz .ag-header-cell-label {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--foreground) !important;
+}
+
+.ag-theme-quartz .ag-header-cell-text {
+  color: var(--foreground) !important;
+}
+/* Fix first column */
+.ag-column-first {
+  padding-left: 3rem !important;
+}
+/* Cell alignment */
+.ag-theme-quartz .ag-cell {
+  display: flex;
+  align-items: center;
+  line-height: 1.5;
+}
+
+/* Remove focus outline */
+.ag-theme-quartz .ag-cell:focus {
+  outline: none;
+  border: none;
+}
+
+/* Pagination styling */
+.ag-theme-quartz .ag-paging-panel {
+  border-top: 1px solid var(--border) !important;
+  padding: 12px 16px !important;
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+}
+
+.ag-theme-quartz .ag-paging-row-summary-panel,
+.ag-theme-quartz .ag-paging-page-summary-panel {
+  color: var(--foreground) !important;
+}
+
+.ag-theme-quartz .ag-paging-button {
+  color: var(--foreground) !important;
+}
+
+.ag-theme-quartz .ag-paging-number,
+.ag-theme-quartz .ag-paging-row-summary-panel-number {
+  color: var(--foreground) !important;
+}
+
+/* Hide scrollbars */
+.ag-theme-quartz .ag-body-horizontal-scroll,
+.ag-theme-quartz .ag-body-vertical-scroll {
+  display: none !important;
+}
+
+.ag-theme-quartz .ag-body-viewport {
+  overflow: hidden !important;
+}
+
+.ag-theme-quartz .ag-center-cols-viewport {
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+
+/* Ag pagination icon */
+/****************************************************
+ * AG GRID PAGINATION (QUARTZ THEME)
+ * Styled to match your Shadcn palette
+ ****************************************************/
+
+.ag-theme-quartz .ag-paging-panel {
+  font-size: 14px;
+  color: var(--foreground);
+  padding: 8px 12px;
+}
+
+/* Pagination buttons */
+.ag-theme-quartz .ag-paging-button {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border 0.15s;
+}
+
+/* Hover */
+.ag-theme-quartz .ag-paging-button:not(.ag-disabled):hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Disabled buttons */
+.ag-theme-quartz .ag-paging-button.ag-disabled {
+  background: var(--muted);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/****************************************************
+ * ARROW ICONS
+ ****************************************************/
+
+/* AG Grid uses CSS masks for icons */
+.ag-theme-quartz .ag-icon {
+  background-color: var(--muted-foreground) !important;
+}
+
+/* Hover — brighten the arrow */
+.ag-theme-quartz .ag-paging-button:not(.ag-disabled):hover .ag-icon {
+  background-color: var(--accent-foreground) !important;
+}
+
+/* Disabled arrow should be dim */
+.ag-theme-quartz .ag-paging-button.ag-disabled .ag-icon {
+  background-color: var(--muted-foreground) !important;
+  opacity: 0.5;
+}
