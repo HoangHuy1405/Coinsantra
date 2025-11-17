@@ -5,12 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 
 import { useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-import {
-  AllCommunityModule,
-  ColDef,
-  ModuleRegistry,
-  GridApi,
-} from "ag-grid-community";
+import { AllCommunityModule, ColDef, ModuleRegistry } from "ag-grid-community";
 
 import { Input } from "@/app/ui/shadcn/input";
 
