@@ -48,7 +48,6 @@ export default function ProfileCard({ profile, onSave }: ProfileCardProps) {
       setIsDirty(false);
       setIsSaved(true);
 
-      // ⏳ Ẩn icon "Saved" sau 2s
       setTimeout(() => setIsSaved(false), 2000);
     } catch (err) {
       console.error("Save failed:", err);
@@ -68,7 +67,7 @@ export default function ProfileCard({ profile, onSave }: ProfileCardProps) {
           <Label htmlFor="firstname">First name</Label>
           <Input
             id="firstname"
-            value={form.firstName}
+            value={form.firstName ?? ""}
             onChange={(e) => handleChange("firstName", e.target.value)}
           />
         </div>
@@ -77,14 +76,14 @@ export default function ProfileCard({ profile, onSave }: ProfileCardProps) {
           <Label htmlFor="lastname">Last name</Label>
           <Input
             id="lastname"
-            value={form.lastName}
+            value={form.lastName ?? ""}
             onChange={(e) => handleChange("lastName", e.target.value)}
           />
         </div>
 
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="phoneNum">Phone number</Label>
-          <Input id="phoneNum" value={form.phoneNum} disabled />
+          <Input id="phoneNum" value={form.phoneNum ?? ""} onChange={(e) => handleChange("phoneNum", e.target.value)} />
         </div>
 
         <div className="space-y-2 sm:col-span-2">

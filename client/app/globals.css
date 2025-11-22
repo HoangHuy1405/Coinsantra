@@ -172,10 +172,6 @@
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
-
-  .tradingview-widget-container {
-    height: 100% !important;
-  }
 }
 
 /* ===========================================

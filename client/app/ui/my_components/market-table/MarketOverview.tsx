@@ -8,7 +8,6 @@ export default function MarketOverview({ className }: { className?: string }) {
     dateRange: "12M",
     locale: "en",
     largeChartUrl: "",
-    isTransparent: false,
     showFloatingTooltip: true,
     plotLineColorGrowing: "rgba(41, 98, 255, 1)",
     plotLineColorFalling: "rgba(41, 98, 255, 1)",

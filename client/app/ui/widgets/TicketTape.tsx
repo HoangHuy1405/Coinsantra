@@ -13,11 +13,11 @@ export default function TickerTape({ className }: { className?: string }) {
             { proName: "BITSTAMP:ETHUSD", title: "Ethereum" },
         ],
         showSymbolLogo: true,
-        isTransparent: false,
         displayMode: "adaptive",
         locale: "en",
-        width: "100%",
-        height: "100%"
+        largeChartUrl: "",
+        isAutoSize: true,
+        isTransparent: false,
     };
 
     return (
@@ -25,6 +25,7 @@ export default function TickerTape({ className }: { className?: string }) {
             src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
             config={config}
             className={className}
+            height={43}
         />
     );
 }

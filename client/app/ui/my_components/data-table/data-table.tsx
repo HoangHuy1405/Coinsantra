@@ -102,9 +102,9 @@ export function DataTable<TData, TValue>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                         {/* Sorting indicators */}
                         {enableSorting && header.column.getCanSort() && (
                           <span className="ml-1 text-xs">

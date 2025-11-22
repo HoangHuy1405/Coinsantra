@@ -7,8 +7,12 @@ import {
 import DashboardSidebar from "./_components/dashboard_sidebar";
 import { Separator } from "../ui/shadcn/separator";
 import { ModeToggle } from "../ui/my_components/Theme/ModeToggle";
+import { UserNav } from "../(root)/_components/Header/UserNav";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-option";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions);
   return (
     <SidebarProvider>
       <DashboardSidebar />
@@ -28,6 +32,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
           <div>
             <ModeToggle />
+            <UserNav user={{
+              name: session?.user?.fullname,
+              username: session?.user?.username,
+              email: session?.user?.email,
+              image: session?.user?.avatarUrl
+            }} />
           </div>
         </header>
         <div className="container mx-auto py-10 px-4 sm:px-6 xl:px-8">

@@ -8,7 +8,6 @@ import ActivityHistoryTable from "@/app/ui/my_components/activity-history-table/
 import { mockActivities } from "@/entities/mockActivities";
 import { SYMBOLS } from "@/app/ui/widgets/constant";
 import { MarketTable } from "@/app/ui/my_components/market-table/MarketTable";
-import { Link } from "lucide-react";
 
 export default function page() {
   return (

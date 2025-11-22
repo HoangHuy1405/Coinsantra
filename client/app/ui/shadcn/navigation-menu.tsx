@@ -61,8 +61,8 @@ function NavigationMenuItem({
 
 const navigationMenuTriggerStyle = cva(
   "group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium" +
-    "disabled:pointer-events-none disabled:opacity-50 " +
-    "outline-none transition-[color,box-shadow]",
+  "disabled:pointer-events-none disabled:opacity-50 " +
+  "outline-none transition-[color,box-shadow]",
   {
     variants: {
       variant: {
@@ -179,9 +179,9 @@ function NavigationMenuViewport({
 }
 const navigationMenuLinkStyle = cva(
   "flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none " +
-    "focus-visible:ring-[3px] focus-visible:outline-1 " +
-    "[&_svg:not([class*='size-'])]:size-4 " +
-    "[&_svg:not([class*='text-'])]:text-muted-foreground",
+  "focus-visible:ring-[3px] focus-visible:outline-1 " +
+  "[&_svg:not([class*='size-'])]:size-4 " +
+  "[&_svg:not([class*='text-'])]:text-muted-foreground",
   {
     variants: {
       variant: {

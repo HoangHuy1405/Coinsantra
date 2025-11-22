@@ -1,11 +1,7 @@
-"use client";
-
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils"; // (ShadCN utility helper)
+import { cn } from "@/lib/utils";
 
-export function GlobalLoader({ show }: { show: boolean }) {
-  if (!show) return null;
-
+export function GlobalLoader() {
   return (
     <div
       className={cn(

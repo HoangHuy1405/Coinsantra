@@ -92,9 +92,8 @@ export function MarketTable({
         const isPositive = change >= 0;
         return (
           <div
-            className={`flex items-center gap-1 font-medium ${
-              isPositive ? "text-green-500" : "text-red-500"
-            }`}
+            className={`flex items-center gap-1 font-medium ${isPositive ? "text-green-500" : "text-red-500"
+              }`}
           >
             {isPositive ? (
               <ArrowUpRight className="w-4 h-4" />

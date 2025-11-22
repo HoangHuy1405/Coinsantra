@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
     "start": "next start"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "@radix-ui/react-navigation-menu": "^1.2.14",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slider": "^1.3.6",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
@@ -26,12 +27,14 @@
     "@tabler/icons-react": "^3.35.0",
     "@tanstack/react-query": "^5.89.0",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.12",
     "ag-grid-community": "^34.3.1",
     "ag-grid-react": "^34.3.1",
     "apexcharts": "^5.3.6",
     "axios": "^1.12.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "framer-motion": "^12.23.22",
     "lightweight-charts": "^5.0.8",
     "lucide-react": "^0.544.0",
@@ -47,6 +50,7 @@
     "react-icons": "^5.5.0",
     "recharts": "^3.3.0",
     "tailwind-merge": "^3.3.1",
+    "use-debounce": "^10.0.6",
     "zod": "^4.1.8",
     "zustand": "^5.0.8"
   },
