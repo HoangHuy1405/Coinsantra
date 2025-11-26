@@ -8,8 +8,9 @@ import org.mapstruct.ReportingPolicy;
 import com.web.TradeApp.feature.aibot.model.Bot;
 import com.web.TradeApp.feature.aibot.dto.BotCreateRequest;
 import com.web.TradeApp.feature.aibot.dto.BotResponse;
+import org.mapstruct.Builder;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE, builder = @Builder(disableBuilder = true))
 public interface BotMapper {
     // --- Ignoring System and Operational Fields ---
     @Mapping(target = "id", ignore = true)

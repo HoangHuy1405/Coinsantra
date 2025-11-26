@@ -1,5 +1,6 @@
 package com.web.TradeApp.feature.aibot.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +10,5 @@ import com.web.TradeApp.feature.aibot.model.Bot;
 
 @Repository
 public interface BotRepository extends JpaRepository<Bot, UUID> {
+    Optional<Bot> findByApiKey(String apiKey);
 }
