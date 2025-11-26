@@ -39,8 +39,9 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
     // --- 2. Database Drivers ---
-    // runtimeOnly 'com.mysql:mysql-connector-j' // MySQL (Disabled)
-    runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc' // MSSQL (Active)
+    runtimeOnly 'com.mysql:mysql-connector-j' // MySQL (Local - for dev)
+    // runtimeOnly 'com.mysql:mysql-connector-j:8.3.0' // MySQL (Local - for dev)
+    runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc' // MSSQL (Azure db - for production)
 
     // Azure storage queue
     implementation 'com.azure:azure-storage-queue:12.21.1' 

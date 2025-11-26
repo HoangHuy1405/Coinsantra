@@ -16,7 +16,6 @@ import com.web.TradeApp.feature.aibot.mapper.BotMapper;
 import com.web.TradeApp.feature.aibot.model.Bot;
 import com.web.TradeApp.feature.aibot.repository.BotRepository;
 import com.web.TradeApp.feature.aibot.repository.BotSubscriptionRepository;
-import com.web.TradeApp.feature.aibot.repository.BotTradeRepository;
 import com.web.TradeApp.utils.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class BotServiceImpl implements BotService {
     private final BotRepository botRepository;
     private final BotSubscriptionRepository botSubscriptionRepository;
-    private final BotTradeRepository botTradeRepository;
     private final BotMapper botMapper;
     private final SecurityUtil securityUtil;
 

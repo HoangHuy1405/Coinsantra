@@ -1,5 +1,6 @@
 package com.web.TradeApp.feature.aibot.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public interface BotAnalysisService {
 
     List<BotMetricsDTO.PnlPoint> getPnlChart24h(UUID botId);
 
-    Double calculatePnl24h(UUID botId);
+    BigDecimal calculatePnl24h(UUID botId);
 
-    Double calculateRoi24h(UUID botId);
+    BigDecimal calculateRoi24h(UUID botId);
 }

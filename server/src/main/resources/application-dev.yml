@@ -2,8 +2,7 @@ spring:
   config:
     import: optional:file:.env.properties
   datasource:
-    # url: jdbc:mysql://localhost:3306/trade_app
-    url: jdbc:sqlserver://${DB_SERVER}.database.windows.net:1433;database=trading-app-db;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    url: jdbc:mysql://localhost:3306/trade_app
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
@@ -11,45 +10,6 @@ spring:
       ddl-auto: update
     show-sql: false
     properties:
-      # database-platform: org.hibernate.dialect.SQLServer2019Dialect
       hibernate:
         format-sql: true
-      # database: mysqlq
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          trust: "*"
-          auth: true
-          starttls:
-            enable: true
-        connectiontimout: 5000
-        timeout: 3000
-        writetimeout: 5000
-
-application:
-  backend-url: ${APP_BACKEND_URL:http://localhost:8080}
-  security:
-    jwt:
-      secret-key: ${JWT_SECRET_KEY}
-      access-expiration: ${JWT_ACCESS_EXPIRATION}
-      refresh-expiration: ${JWT_REFRESH_EXPIRATION}
-
-google:
-  oauth2:
-    client-id: ${GOOGLE_CLIENT_ID}
-    client-secret: ${GOOGLE_CLIENT_SECRET}
-
-cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME}
-  api-key: ${CLOUDINARY_API_KEY}
-  api-secret: ${CLOUDINARY_API_SECRET}
-
-azure:
-  storage:
-    connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
-    queue-name: ${AZURE_QUEUE_NAME}
+    database: mysql

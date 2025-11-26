@@ -1,5 +1,7 @@
 package com.web.TradeApp.feature.aibot.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -32,8 +34,8 @@ public class BotAnalysisServiceImpl implements BotAnalysisService {
         botRepository.findById(botId)
                 .orElseThrow(() -> new RuntimeException("Bot not found"));
 
-        Double pnl24h = calculatePnl24h(botId);
-        Double roi24h = calculateRoi24h(botId);
+        BigDecimal pnl24h = calculatePnl24h(botId);
+        BigDecimal roi24h = calculateRoi24h(botId);
         long subs = subscriptionRepository.countActiveSubscribers(botId);
         Instant lastSignal = signalRepository.findLastSignalTime(botId);
         List<BotMetricsDTO.PnlPoint> chart = getPnlChart24h(botId);
@@ -48,22 +50,28 @@ public class BotAnalysisServiceImpl implements BotAnalysisService {
     }
 
     @Override
-    public Double calculatePnl24h(UUID botId) {
+    public BigDecimal calculatePnl24h(UUID botId) {
         Instant from = Instant.now().minus(Duration.ofHours(24));
-        return tradeRepository.sumRealizedPnlSince(botId, from);
+        return new BigDecimal(tradeRepository.sumRealizedPnlSince(botId, from));
     }
 
     @Override
-    public Double calculateRoi24h(UUID botId) {
-
-        Double allocated = subscriptionRepository.sumAllocatedCapital(botId);
-        Double pnl24h = calculatePnl24h(botId);
-
-        if (allocated == null || allocated == 0) {
-            return 0.0;
+    public BigDecimal calculateRoi24h(UUID botId) {
+        // 1. Fetch allocated capital as Double (since repo returns Double)
+        Double allocatedDouble = subscriptionRepository.sumAllocatedCapital(botId);
+        // 2. Convert to BigDecimal safely, handling Nulls
+        BigDecimal allocated = (allocatedDouble != null) ? BigDecimal.valueOf(allocatedDouble) : BigDecimal.ZERO;
+        BigDecimal pnl24h = calculatePnl24h(botId);
+        if (pnl24h == null) {
+            pnl24h = BigDecimal.ZERO;
         }
-
-        return (pnl24h / allocated) * 100.0;
+        // 3. Prevent Division by Zero
+        if (allocated.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+        // 4. Perform Calculation: (PnL / Allocated) * 100
+        return pnl24h.divide(allocated, 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
     }
 
     @Override
@@ -75,11 +83,11 @@ public class BotAnalysisServiceImpl implements BotAnalysisService {
 
         List<BotMetricsDTO.PnlPoint> points = new ArrayList<>();
 
-        double cumulative = 0.0;
+        BigDecimal cumulative = new BigDecimal(0);
 
         for (BotTrade trade : trades) {
-            cumulative += trade.getRealizedPnl();
-            points.add(new BotMetricsDTO.PnlPoint(trade.getExecutedAt(), cumulative));
+            cumulative.add(trade.getPnl());
+            points.add(new BotMetricsDTO.PnlPoint(trade.getCreatedAt(), cumulative));
         }
 
         return points;

@@ -1,0 +1,14 @@
+spring:
+  config:
+    import: optional:file:.env.properties
+  datasource:
+    # AZURE MSSQL Connection
+    url: jdbc:sqlserver://${AZURE_DB_SERVER}.database.windows.net:1433;database=trading-app-db;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    username: ${AZURE_DB_USERNAME}
+    password: ${AZURE_DB_PASSWORD}
+  jpa:
+    # database-platform: org.hibernate.dialect.SQLServer2019Dialect
+    hibernate:
+      # Use 'validate' or 'none' in production to prevent data loss
+      ddl-auto: validate
+    show-sql: false

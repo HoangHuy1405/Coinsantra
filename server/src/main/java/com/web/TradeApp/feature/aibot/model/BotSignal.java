@@ -62,6 +62,7 @@ public class BotSignal extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
+    @Builder.Default
     private SignalStatus status = SignalStatus.PENDING; // Default
 
     @Column(name = "processed_at")

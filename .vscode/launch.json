@@ -2,22 +2,24 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Spring Boot-TradeAppApplication<server>",
+      "name": "Spring Boot - DEV (Local MySQL)",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "mainClass": "com.web.TradeApp.TradeAppApplication",
       "projectName": "server",
       "args": "",
+      "vmArgs": "-Dspring.profiles.active=dev"
       "envFile": "${workspaceFolder}/.env"
     },
     {
       "type": "java",
-      "name": "Spring Boot-TradeAppApplication<TradeApp-server>",
+      "name": "Spring Boot - PROD (Azure SQL)",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "mainClass": "com.web.TradeApp.TradeAppApplication",
       "projectName": "TradeApp-server",
       "args": "",
+      "vmArgs": "-Dspring.profiles.active=prod",
       "envFile": "${workspaceFolder}/.env"
     },
     {

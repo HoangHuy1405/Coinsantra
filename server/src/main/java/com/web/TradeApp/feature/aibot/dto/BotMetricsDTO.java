@@ -1,5 +1,6 @@
 package com.web.TradeApp.feature.aibot.dto;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -11,8 +12,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class BotMetricsDTO {
     private UUID botId;
-    private Double pnl24h;
-    private Double roi24h;
+    private BigDecimal pnl24h;
+    private BigDecimal roi24h;
     private long copyingUsers;
     private Instant lastSignalAt;
     private List<PnlPoint> pnlChart24h;
@@ -21,6 +22,6 @@ public class BotMetricsDTO {
     @AllArgsConstructor
     public static class PnlPoint {
         private Instant time;
-        private Double pnl;
+        private BigDecimal pnl;
     }
 }

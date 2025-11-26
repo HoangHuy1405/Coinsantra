@@ -34,6 +34,7 @@ public class Coin extends BaseEntity {
     private BigDecimal fee;
 
     // Lượng coin hệ thống (CEO) đang nắm giữ
-    @Column(nullable = false, precision = 38, scale = 18)
-    private BigDecimal quantity;
+    // @Column(nullable = false, precision = 38, scale = 18)
+    // private BigDecimal quantity;
+    // REASON: Admin funds are now stored in CoinHolding linked to an Admin Wallet
 }

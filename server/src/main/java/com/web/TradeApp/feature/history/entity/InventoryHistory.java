@@ -26,11 +26,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 /**
- * To keep track of admin deposit/withdraw coins and user buy/sell coins
+ * To keep track of admin deposit/withdraw coins to outer world
  */
 public class InventoryHistory extends BaseEntity {
     public enum ActionType {
-        DEPOSIT, WITHDRAW, SELL_TO_USER, BUY_FROM_USER, ADJUST
+        DEPOSIT, WITHDRAW, ADJUST
     }
 
     @ManyToOne(optional = false)

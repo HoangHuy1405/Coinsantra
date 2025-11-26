@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import com.web.TradeApp.feature.aibot.enums.BotCategory;
@@ -52,6 +53,10 @@ public class Bot extends BaseEntity {
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
     private BotStatus status = BotStatus.ACTIVE;
+
+    @Column(name = "fee", nullable = false, precision = 5, scale = 4)
+    @Builder.Default
+    private BigDecimal fee = BigDecimal.ZERO;
 
     @Column(name = "last_signal_at")
     private Instant lastSignalAt;

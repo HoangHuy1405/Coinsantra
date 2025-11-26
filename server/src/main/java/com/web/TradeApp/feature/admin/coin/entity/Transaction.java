@@ -1,21 +1,18 @@
 package com.web.TradeApp.feature.admin.coin.entity;
 
-import java.math.BigDecimal;
-
-import com.web.TradeApp.feature.common.entity.BaseEntity;
+import com.web.TradeApp.feature.common.entity.BaseTrade;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "transactions")
@@ -23,29 +20,18 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Transaction extends BaseEntity {
-    public enum Type {
-        BUY, SELL
+@SuperBuilder
+public class Transaction extends BaseTrade {
+
+    public enum Source {
+        MANUAL,
+        BOT
     }
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "wallet_id")
-    private Wallet wallet;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "coin_id")
-    private Coin coin;
+    // --- TRANSACTION SPECIFIC FIELDS ---
 
     @Enumerated(EnumType.STRING)
-    private Type type;
-
-    @Column(nullable = false, precision = 38, scale = 18)
-    private BigDecimal quantity;
-
-    @Column(nullable = false, precision = 19, scale = 8)
-    private BigDecimal priceAtExecution;
-
-    @Column(nullable = false, precision = 19, scale = 8)
-    private BigDecimal feeApplied;
+    @Column(nullable = false, length = 10)
+    @Builder.Default
+    private Source source = Source.MANUAL;
 }
