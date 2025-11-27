@@ -1,13 +1,14 @@
 import { Badge } from "@/app/ui/shadcn/badge";
 import { Button } from "@/app/ui/shadcn/button";
 import { Card } from "@/app/ui/shadcn/card";
+import { SortOption, TimeWindow } from "@/services/interfaces/botInterfaces";
 import { Users, Copy } from "lucide-react";
 
 // Priority type: determines which metric should be highlighted
 // "roi" → ROI becomes the main large metric
 // "pnl" → PnL becomes the main large metric
 export type MetricPriority = "roi" | "pnl";
-export type timeSlot = "1d" | "7d" | "30d" | "all";
+// export type timeSlot = "1d" | "7d" | "30d" | "all";
 
 interface BotCardProps {
   id: string;
@@ -20,12 +21,12 @@ interface BotCardProps {
   pnl7d: number;
   pnl30d: number;
   maxDrawdown: number;
-  assets: string[];
+  coin: string;
   activeUsers: number;
   onCopy: (id: string) => void;
   onClick: (id: string) => void;
-  timeWindow: timeSlot;
-  priority?: MetricPriority; // NEW
+  timeWindow: TimeWindow;
+  priority?: SortOption; // NEW
 }
 
 export function BotCard({
@@ -39,7 +40,7 @@ export function BotCard({
   pnl7d,
   pnl30d,
   maxDrawdown,
-  assets,
+  coin,
   activeUsers,
   onCopy,
   onClick,
@@ -211,15 +212,13 @@ export function BotCard({
 
       {/* Assets */}
       <div className="mb-4 flex flex-wrap gap-1.5">
-        {assets.map((asset) => (
-          <Badge
-            key={asset}
-            variant="outline"
-            className="rounded-full border-border bg-accent/50 text-xs"
-          >
-            {asset}
-          </Badge>
-        ))}
+        <Badge
+          key={coin}
+          variant="outline"
+          className="rounded-full border-border bg-accent/50 text-xs"
+        >
+          {coin}
+        </Badge>
       </div>
     </Card>
   );
