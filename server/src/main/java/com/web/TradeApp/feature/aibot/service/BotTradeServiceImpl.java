@@ -142,7 +142,7 @@ public class BotTradeServiceImpl implements BotTradeService {
 
                 // 8. Save Records
                 saveTransaction(userWallet, coin, BaseTrade.TradeType.BUY, finalQuantity, price, grossUsdtToSpend);
-                saveBotTrade(sub, BaseTrade.TradeType.BUY, finalQuantity, price, grossUsdtToSpend);
+                saveBotTrade(sub, BaseTrade.TradeType.BUY, finalQuantity, price, grossUsdtToSpend, grossUsdtToSpend);
 
                 log.info("✅ BUY: User {} | Spent {} USDT | Got {} {}", sub.getUserId(), grossUsdtToSpend, finalQuantity,
                                 coin.getSymbol());
@@ -250,7 +250,7 @@ public class BotTradeServiceImpl implements BotTradeService {
                 // Fee = Raw Value - Final Value Received
                 BigDecimal totalFee = rawUsdtValue.subtract(finalUsdt);
                 saveTransaction(userWallet, coin, BaseTrade.TradeType.SELL, quantityToSell, price, totalFee);
-                saveBotTrade(sub, BaseTrade.TradeType.SELL, quantityToSell, price, finalUsdt);
+                saveBotTrade(sub, BaseTrade.TradeType.SELL, quantityToSell, price, finalUsdt, totalFee);
 
                 log.info("✅ SELL: User {} | Sold {} {} | Got {} USDT", sub.getUserId(), quantityToSell,
                                 coin.getSymbol(), finalUsdt);
@@ -272,7 +272,7 @@ public class BotTradeServiceImpl implements BotTradeService {
         }
 
         private void saveBotTrade(BotSubscription sub, BaseTrade.TradeType type, BigDecimal qty, BigDecimal price,
-                        BigDecimal notional) {
+                        BigDecimal notional, BigDecimal feeOrNotional) {
                 BotTrade trade = BotTrade.builder()
                                 .bot(sub.getBot())
                                 // Now we must fetch the User Wallet again or pass it down to ensure BaseTrade
@@ -286,6 +286,7 @@ public class BotTradeServiceImpl implements BotTradeService {
                                 .priceAtExecution(price)
                                 .notionalValue(notional)
                                 .feeBotApplied(BigDecimal.ZERO)
+                                .feeTradeApplied(type == BaseTrade.TradeType.SELL ? feeOrNotional : BigDecimal.ZERO)
                                 .pnl(null)
                                 .build();
                 botTradeRepo.save(trade);

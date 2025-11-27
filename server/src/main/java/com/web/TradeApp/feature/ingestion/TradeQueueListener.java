@@ -96,7 +96,7 @@ public class TradeQueueListener {
             // 4. SUCCESS: SAVE TO DB
             saveBotSignal(bot, payloadNode, messageBody);
 
-            log.info("✅ Signal saved for Bot: {}", bot.getName());
+            // log.info("✅ Signal saved for Bot: {}", bot.getName());
 
             // 5. DELETE FROM QUEUE (Commit)
             deleteMessage(message);
@@ -181,7 +181,7 @@ public class TradeQueueListener {
 
         BotSignal savedSignal = botSignalRepository.save(signal);
 
-        log.info("✅ Signal saved. Publishing event for Bot: {}", bot.getName());
+        // log.info("✅ Signal saved. Publishing event for Bot: {}", bot.getName());
         eventPublisher.publishEvent(new SignalReceivedEvent(this, savedSignal));
     }
 

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("admin/bots")
 @RequiredArgsConstructor
-public class BotController {
+public class BotAdminController {
     private final BotService botService;
 
     @PostMapping

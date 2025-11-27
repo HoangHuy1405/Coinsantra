@@ -8,7 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.support.TransactionTemplate; // 1. IMPORT THIS
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.web.TradeApp.feature.admin.coin.entity.Coin;
 import com.web.TradeApp.feature.admin.coin.entity.CoinHolding;
@@ -40,8 +40,14 @@ public class DataSeeder {
 
     public static final String uniqueAdminUsername = "admin";
     private static final BigDecimal FEE = new BigDecimal("0.025");
+
+    // Admin Config
     private static final BigDecimal ADMIN_BALANCE = new BigDecimal("10000000");
-    private static final BigDecimal AMOUNT_COIN = new BigDecimal("1000");
+    private static final BigDecimal ADMIN_COIN_AMOUNT = new BigDecimal("1000");
+
+    // User Config
+    private static final BigDecimal USER_BALANCE = new BigDecimal("10000"); // 10,000 USDT
+    private static final BigDecimal USER_BTC_AMOUNT = new BigDecimal("10"); // 10 BTC
 
     @Bean
     public CommandLineRunner seedData() {
@@ -50,8 +56,12 @@ public class DataSeeder {
 
             transactionTemplate.execute(status -> {
 
-                // 1. Seed Admin User
-                User admin = userRepository.findByUsername("admin").orElseGet(() -> {
+                // --- 1. SEED TRADERS (User1 & User2) ---
+                seedTrader("user1", "John", "Paul", "user1@example.com", "02546113841");
+                seedTrader("user2", "Michael", "Jackson", "user2@example.com", "02546113234");
+
+                // --- 2. SEED ADMIN ---
+                User admin = userRepository.findByUsername(uniqueAdminUsername).orElseGet(() -> {
                     User newAdmin = User.builder()
                             .username(uniqueAdminUsername)
                             .firstName("System")
@@ -67,7 +77,7 @@ public class DataSeeder {
                     return userRepository.save(newAdmin);
                 });
 
-                // 2. Seed Admin Wallet
+                // Seed Admin Wallet
                 Wallet wallet = walletRepository.findByUserId(admin.getId()).orElseGet(() -> {
                     Wallet newWallet = Wallet.builder()
                             .user(admin)
@@ -76,20 +86,20 @@ public class DataSeeder {
                     return walletRepository.save(newWallet);
                 });
 
-                // Optional: Force balance update if needed
+                // Force balance update for Admin if needed
                 if (wallet.getBalance().compareTo(ADMIN_BALANCE) < 0) {
                     wallet.setBalance(ADMIN_BALANCE);
                     walletRepository.save(wallet);
                 }
 
-                // 3. Seed Coins and Holdings
-                seedCoinAndHolding(wallet, "bitcoin", "Bitcoin", "BTC");
-                seedCoinAndHolding(wallet, "ethereum", "Ethereum", "ETH");
-                seedCoinAndHolding(wallet, "binancecoin", "BNB", "BNB");
-                seedCoinAndHolding(wallet, "solana", "Solana", "SOL");
-                seedCoinAndHolding(wallet, "ripple", "XRP", "XRP");
-                seedCoinAndHolding(wallet, "cardano", "Cardano", "ADA");
-                seedCoinAndHolding(wallet, "dogecoin", "Dogecoin", "DOGE");
+                // Seed Admin Coins (1000 of each)
+                seedCoinAndHolding(wallet, "bitcoin", "Bitcoin", "BTC", ADMIN_COIN_AMOUNT);
+                seedCoinAndHolding(wallet, "ethereum", "Ethereum", "ETH", ADMIN_COIN_AMOUNT);
+                seedCoinAndHolding(wallet, "binancecoin", "BNB", "BNB", ADMIN_COIN_AMOUNT);
+                seedCoinAndHolding(wallet, "solana", "Solana", "SOL", ADMIN_COIN_AMOUNT);
+                seedCoinAndHolding(wallet, "ripple", "XRP", "XRP", ADMIN_COIN_AMOUNT);
+                seedCoinAndHolding(wallet, "cardano", "Cardano", "ADA", ADMIN_COIN_AMOUNT);
+                seedCoinAndHolding(wallet, "dogecoin", "Dogecoin", "DOGE", ADMIN_COIN_AMOUNT);
 
                 return null;
             });
@@ -98,7 +108,44 @@ public class DataSeeder {
         };
     }
 
-    private void seedCoinAndHolding(Wallet wallet, String coinGeckoId, String name, String symbol) {
+    private void seedTrader(String username, String firstName, String lastName, String email, String phone) {
+        // A. Create User
+        User user = userRepository.findByUsername(username).orElseGet(() -> {
+            User newUser = User.builder()
+                    .username(username)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .email(email)
+                    .password(passwordEncoder.encode("root"))
+                    .roles(Set.of(Role.TRADER))
+                    .phoneNum(phone)
+                    .enabled(true)
+                    .accountLocked(false)
+                    .authProvider(AuthProvider.CREDENTIALS)
+                    .build();
+            return userRepository.save(newUser);
+        });
+
+        // B. Create Wallet with 10,000 USDT
+        Wallet wallet = walletRepository.findByUserId(user.getId()).orElseGet(() -> {
+            Wallet newWallet = Wallet.builder()
+                    .user(user)
+                    .balance(USER_BALANCE)
+                    .build();
+            return walletRepository.save(newWallet);
+        });
+
+        // Ensure balance is at least 10,000 (if existed previously with 0)
+        if (wallet.getBalance().compareTo(USER_BALANCE) < 0) {
+            wallet.setBalance(USER_BALANCE);
+            walletRepository.save(wallet);
+        }
+
+        // C. Seed 10 BTC
+        seedCoinAndHolding(wallet, "bitcoin", "Bitcoin", "BTC", USER_BTC_AMOUNT);
+    }
+
+    private void seedCoinAndHolding(Wallet wallet, String coinGeckoId, String name, String symbol, BigDecimal amount) {
         // A. Find or Create Coin
         Coin coin = coinRepository.findByCoinGeckoId(coinGeckoId).orElseGet(() -> {
             return coinRepository.save(Coin.builder()
@@ -109,7 +156,7 @@ public class DataSeeder {
                     .build());
         });
 
-        // B. Check if Admin already holds this coin
+        // B. Check if User already holds this coin
         Optional<CoinHolding> existingHolding = coinHoldingRepository.findByWalletIdAndCoinId(wallet.getId(),
                 coin.getId());
 
@@ -117,8 +164,8 @@ public class DataSeeder {
             CoinHolding holding = CoinHolding.builder()
                     .wallet(wallet)
                     .coin(coin)
-                    .amount(AMOUNT_COIN)
-                    .averageBuyPrice(new BigDecimal("100"))
+                    .amount(amount)
+                    .averageBuyPrice(new BigDecimal("60000")) // Dummy entry price for BTC
                     .build();
             coinHoldingRepository.save(holding);
         }

@@ -8,7 +8,7 @@
       "mainClass": "com.web.TradeApp.TradeAppApplication",
       "projectName": "server",
       "args": "",
-      "vmArgs": "-Dspring.profiles.active=dev"
+      "vmArgs": "-Dspring.profiles.active=dev",
       "envFile": "${workspaceFolder}/.env"
     },
     {
