@@ -10,17 +10,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.web.TradeApp.feature.admin.coin.entity.Coin;
-import com.web.TradeApp.feature.admin.coin.entity.CoinHolding;
-import com.web.TradeApp.feature.admin.coin.entity.Wallet;
+import com.web.TradeApp.feature.coin.entity.Coin;
+import com.web.TradeApp.feature.coin.entity.CoinHolding;
+import com.web.TradeApp.feature.coin.entity.Wallet;
+import com.web.TradeApp.feature.coin.repository.CoinHoldingRepository;
+import com.web.TradeApp.feature.coin.repository.CoinRepository;
+import com.web.TradeApp.feature.coin.repository.WalletRepository;
 import com.web.TradeApp.feature.user.auth.constant.AuthProvider;
 import com.web.TradeApp.feature.user.auth.constant.Role;
 import com.web.TradeApp.feature.user.entity.User;
 
 import com.web.TradeApp.feature.user.repository.UserRepository;
-import com.web.TradeApp.feature.admin.coin.repository.CoinRepository;
-import com.web.TradeApp.feature.admin.coin.repository.CoinHoldingRepository;
-import com.web.TradeApp.feature.admin.coin.repository.WalletRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +59,7 @@ public class DataSeeder {
                 // --- 1. SEED TRADERS (User1 & User2) ---
                 seedTrader("user1", "John", "Paul", "user1@example.com", "02546113841");
                 seedTrader("user2", "Michael", "Jackson", "user2@example.com", "02546113234");
+                seedTrader("user3", "Duy", "Tien", "user3@example.com", "02546163234");
 
                 // --- 2. SEED ADMIN ---
                 User admin = userRepository.findByUsername(uniqueAdminUsername).orElseGet(() -> {

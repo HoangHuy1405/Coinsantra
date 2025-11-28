@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.web.TradeApp.feature.admin.coin.dto.CoinDepositRequest;
-import com.web.TradeApp.feature.admin.coin.dto.CoinDepositResponse;
-import com.web.TradeApp.feature.admin.coin.dto.CoinWithdrawRequest;
-import com.web.TradeApp.feature.admin.coin.dto.CoinWithdrawResponse;
-import com.web.TradeApp.feature.admin.coin.service.AdminCoinService;
+import com.web.TradeApp.feature.admin.service.AdminCoinService;
+import com.web.TradeApp.feature.coin.dto.CoinDepositRequest;
+import com.web.TradeApp.feature.coin.dto.CoinDepositResponse;
+import com.web.TradeApp.feature.coin.dto.CoinWithdrawRequest;
+import com.web.TradeApp.feature.coin.dto.CoinWithdrawResponse;
 import com.web.TradeApp.feature.common.Annotation.ApiMessage;
 import com.web.TradeApp.feature.common.response.ResultPaginationResponse;
 

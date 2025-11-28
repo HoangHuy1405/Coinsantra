@@ -1,4 +1,4 @@
-package com.web.TradeApp.feature.admin.coin.service;
+package com.web.TradeApp.feature.admin.service;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,16 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.web.TradeApp.exception.IdInvalidException;
-import com.web.TradeApp.feature.admin.coin.dto.CoinDepositRequest;
-import com.web.TradeApp.feature.admin.coin.dto.CoinDepositResponse;
-import com.web.TradeApp.feature.admin.coin.dto.CoinInfoResponse;
-import com.web.TradeApp.feature.admin.coin.dto.CoinWithdrawRequest;
-import com.web.TradeApp.feature.admin.coin.dto.CoinWithdrawResponse;
-import com.web.TradeApp.feature.admin.coin.entity.Coin;
-import com.web.TradeApp.feature.admin.coin.entity.CoinHolding;
-import com.web.TradeApp.feature.admin.coin.entity.Wallet;
-import com.web.TradeApp.feature.admin.coin.repository.CoinHoldingRepository;
-import com.web.TradeApp.feature.admin.coin.repository.CoinRepository;
+import com.web.TradeApp.feature.coin.dto.CoinDepositRequest;
+import com.web.TradeApp.feature.coin.dto.CoinDepositResponse;
+import com.web.TradeApp.feature.coin.dto.CoinInfoResponse;
+import com.web.TradeApp.feature.coin.dto.CoinWithdrawRequest;
+import com.web.TradeApp.feature.coin.dto.CoinWithdrawResponse;
+import com.web.TradeApp.feature.coin.entity.Coin;
+import com.web.TradeApp.feature.coin.entity.CoinHolding;
+import com.web.TradeApp.feature.coin.entity.Wallet;
+import com.web.TradeApp.feature.coin.repository.CoinHoldingRepository;
+import com.web.TradeApp.feature.coin.repository.CoinRepository;
+import com.web.TradeApp.feature.coin.service.CoinGeckoClient;
 import com.web.TradeApp.feature.common.response.ResultPaginationResponse;
 import com.web.TradeApp.feature.history.entity.InventoryHistory;
 import com.web.TradeApp.feature.history.repository.InventoryHistoryRepository;

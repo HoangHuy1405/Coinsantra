@@ -2,7 +2,7 @@ package com.web.TradeApp.feature.history.entity;
 
 import java.math.BigDecimal;
 
-import com.web.TradeApp.feature.admin.coin.entity.Coin;
+import com.web.TradeApp.feature.coin.entity.Coin;
 import com.web.TradeApp.feature.common.entity.BaseEntity;
 
 import jakarta.persistence.Column;

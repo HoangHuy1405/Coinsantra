@@ -2,8 +2,8 @@ package com.web.TradeApp.feature.common.entity;
 
 import java.math.BigDecimal;
 
-import com.web.TradeApp.feature.admin.coin.entity.Coin;
-import com.web.TradeApp.feature.admin.coin.entity.Wallet;
+import com.web.TradeApp.feature.coin.entity.Coin;
+import com.web.TradeApp.feature.coin.entity.Wallet;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;

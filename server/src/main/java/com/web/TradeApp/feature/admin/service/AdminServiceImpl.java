@@ -1,12 +1,12 @@
-package com.web.TradeApp.feature.admin.coin.service;
+package com.web.TradeApp.feature.admin.service;
 
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import com.web.TradeApp.config.DataSeeder;
-import com.web.TradeApp.feature.admin.coin.entity.Wallet;
-import com.web.TradeApp.feature.admin.coin.repository.WalletRepository;
+import com.web.TradeApp.feature.coin.entity.Wallet;
+import com.web.TradeApp.feature.coin.repository.WalletRepository;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.web.TradeApp.feature.admin.coin.entity;
+package com.web.TradeApp.feature.coin.entity;
 
 import com.web.TradeApp.feature.common.entity.BaseTrade;
 

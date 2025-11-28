@@ -1,4 +1,4 @@
-package com.web.TradeApp.feature.admin.coin.repository;
+package com.web.TradeApp.feature.coin.repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.web.TradeApp.feature.admin.coin.entity.CoinHolding;
+import com.web.TradeApp.feature.coin.entity.CoinHolding;
 
 @Repository
 public interface CoinHoldingRepository extends JpaRepository<CoinHolding, UUID> {

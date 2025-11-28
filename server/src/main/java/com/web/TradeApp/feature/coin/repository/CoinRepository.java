@@ -1,4 +1,4 @@
-package com.web.TradeApp.feature.admin.coin.repository;
+package com.web.TradeApp.feature.coin.repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 
-import com.web.TradeApp.feature.admin.coin.entity.Coin;
+import com.web.TradeApp.feature.coin.entity.Coin;
 
 import jakarta.persistence.LockModeType;
 

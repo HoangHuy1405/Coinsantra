@@ -65,6 +65,24 @@ public class TradeQueueListener {
             // "secret_key": "..." } }
             JsonNode rootNode = objectMapper.readTree(messageBody);
 
+            // 2.1 TIMESTAMP VALIDATION: Check if message is older than 5 minutes
+            long receivedAt = rootNode.path("receivedAt").asLong(0);
+            if (receivedAt > 0) {
+                long currentTimeMillis = System.currentTimeMillis();
+                long ageInMillis = currentTimeMillis - receivedAt;
+                long fiveMinutesInMillis = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+                if (ageInMillis > fiveMinutesInMillis) {
+                    log.warn("⏰ STALE MESSAGE: Message is {} minutes old. Discarding. Msg ID: {}",
+                            ageInMillis / 60000, message.getMessageId());
+                    deleteMessage(message); // Remove stale message
+                    return;
+                }
+            } else {
+                log.warn("⚠️ MISSING TIMESTAMP: receivedAt field not found. Msg ID: {}", message.getMessageId());
+                // Continue processing if no timestamp (for backward compatibility)
+            }
+
             // Extract Credentials
             String incomingToken = rootNode.path("webhookToken").asText(null);
             JsonNode payloadNode = rootNode.path("payload");

@@ -1,4 +1,4 @@
-package com.web.TradeApp.feature.admin.coin.dto;
+package com.web.TradeApp.feature.coin.dto;
 
 import java.math.BigDecimal;
 import java.util.UUID;

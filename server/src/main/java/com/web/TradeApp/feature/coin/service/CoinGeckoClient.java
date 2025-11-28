@@ -1,4 +1,4 @@
-package com.web.TradeApp.feature.admin.coin.service;
+package com.web.TradeApp.feature.coin.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;

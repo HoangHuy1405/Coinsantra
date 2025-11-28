@@ -11,12 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.web.TradeApp.exception.IdInvalidException;
 import com.web.TradeApp.exception.InsufficientBalanceException;
-import com.web.TradeApp.feature.admin.coin.entity.Coin;
-import com.web.TradeApp.feature.admin.coin.entity.CoinHolding;
-import com.web.TradeApp.feature.admin.coin.entity.Wallet;
-import com.web.TradeApp.feature.admin.coin.repository.CoinHoldingRepository;
-import com.web.TradeApp.feature.admin.coin.repository.CoinRepository;
-import com.web.TradeApp.feature.admin.coin.repository.WalletRepository;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotCopyRequest;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotSubscriptionResponse;
 import com.web.TradeApp.feature.aibot.enums.BotAction;
@@ -26,6 +20,12 @@ import com.web.TradeApp.feature.aibot.model.BotSignal;
 import com.web.TradeApp.feature.aibot.model.BotSubscription;
 import com.web.TradeApp.feature.aibot.repository.BotRepository;
 import com.web.TradeApp.feature.aibot.repository.BotSubscriptionRepository;
+import com.web.TradeApp.feature.coin.entity.Coin;
+import com.web.TradeApp.feature.coin.entity.CoinHolding;
+import com.web.TradeApp.feature.coin.entity.Wallet;
+import com.web.TradeApp.feature.coin.repository.CoinHoldingRepository;
+import com.web.TradeApp.feature.coin.repository.CoinRepository;
+import com.web.TradeApp.feature.coin.repository.WalletRepository;
 import com.web.TradeApp.feature.ingestion.event.SignalReceivedEvent;
 
 import jakarta.transaction.Transactional;
