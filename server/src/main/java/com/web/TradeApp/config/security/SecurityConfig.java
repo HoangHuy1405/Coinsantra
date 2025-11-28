@@ -37,6 +37,7 @@ public class SecurityConfig {
                         "/auth/refresh",
                         "/auth/activate",
                         "/auth/social/**",
+                        "bots/**",
                         "/swagger-ui.html",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",

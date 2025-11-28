@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/app/ui/shadcn/select";
 import { cn } from "@/lib/utils";
-import { timeSlot } from "./BotCard";
+import { SortOption, TimeWindow } from "@/services/interfaces/botInterfaces";
 import { Search, Info, SlidersHorizontal } from "lucide-react";
 
 interface FilterSortBarProps {
@@ -18,11 +18,11 @@ interface FilterSortBarProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
 
-  sortValue: "pnl" | "roi" | "copied";
-  onSortChange: (value: "pnl" | "roi" | "copied") => void;
+  sortValue: SortOption;
+  onSortChange: (value: SortOption) => void;
 
-  timeWindow: timeSlot;
-  onTimeWindowChange: (value: timeSlot) => void;
+  timeWindow: TimeWindow;
+  onTimeWindowChange: (value: TimeWindow) => void;
 
   pageNumber?: number;
   className?: string;

@@ -14,7 +14,7 @@ import com.web.TradeApp.feature.aibot.service.BotAnalysisService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("admin/bots")
+@RequestMapping("bots")
 @RequiredArgsConstructor
 public class BotAnalysisController {
 

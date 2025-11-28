@@ -1,5 +1,5 @@
 import useAxiosAuth from "@/hooks/useAxiosAuth";
-import { ApiResponse } from "@/lib/type";
+import { ApiResponse } from "@/services/constants/type";
 import { AxiosInstance } from "axios";
 
 export type UserProfile = {

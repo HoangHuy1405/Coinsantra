@@ -30,7 +30,7 @@ public class BotServiceImpl implements BotService {
 
     // 1. Inject the value from YAML
     // If it's missing, it defaults to http://localhost:8080
-    @Value("${application.backend-url:http://localhost:8080}")
+    @Value("${application.webhook-url:http://localhost:8080}")
     private String baseUrl;
 
     @Override
@@ -39,20 +39,18 @@ public class BotServiceImpl implements BotService {
         Bot bot = botMapper.toEntity(request);
 
         // 2. GENERATE KEYS (The Security Part)
-        String generatedApiKey = securityUtil.generateSecureString(32); // e.g., "bk_7f8a9d..."
+        String generatedWebHookToken = securityUtil.generateSecureString(32); // e.g., "bk_7f8a9d..."
         String generatedApiSecret = securityUtil.generateSecureString(64); // e.g., "sec_9a8f..."
 
-        bot.setApiKey(generatedApiKey);
         bot.setApiSecret(generatedApiSecret);
+        bot.setApiKey(generatedWebHookToken);
 
         // 3. Save to DB
         Bot savedBot = botRepository.save(bot);
 
         // 4. Construct the Webhook URL
         // This is the address the Python bot needs to send data TO
-        String webhookUrl = String.format("%s/api/v1/webhooks/%s/signal",
-                baseUrl,
-                savedBot.getId());
+        String webhookUrl = String.format("%s/%s", baseUrl, generatedWebHookToken);
 
         // 5. Update the Bot entity with the final webhook URL and re-save
         // We store the webhook URL for auditing/reference, even though it's derivable.
@@ -63,7 +61,7 @@ public class BotServiceImpl implements BotService {
         return new BotSecretResponse(
                 savedBot.getId(),
                 savedBot.getName(),
-                generatedApiKey,
+                generatedWebHookToken,
                 generatedApiSecret,
                 webhookUrl);
     }
@@ -117,8 +115,8 @@ public class BotServiceImpl implements BotService {
         botRepository.deleteById(botId);
     }
 
-    // Helpers
-    private BotResponse.BotStats calculateStats(Bot bot) {
+    @Override
+    public BotResponse.BotStats calculateStats(Bot bot) {
         Long subscriberCount = botSubscriptionRepository.countActiveSubscribers(bot.getId());
 
         // Mocking trade count/ROI for now as per previous context

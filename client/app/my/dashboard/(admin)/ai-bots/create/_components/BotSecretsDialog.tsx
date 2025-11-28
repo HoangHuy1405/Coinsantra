@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check, AlertTriangle, Eye, EyeOff } from "lucide-react";
+// Ensure these paths match your project structure exactly
 import { Button } from "@/app/ui/shadcn/button";
 import {
   Dialog,
@@ -12,10 +13,9 @@ import {
   DialogTitle,
 } from "@/app/ui/shadcn/dialog";
 import { Input } from "@/app/ui/shadcn/input";
-// Add Textarea import
 import { Textarea } from "@/app/ui/shadcn/textarea";
 import { Label } from "@/app/ui/shadcn/label";
-import { BotSecretResponse } from "@/services/botService";
+import { BotSecretResponse } from "@/services/interfaces/botInterfaces";
 
 interface Props {
   open: boolean;
@@ -38,22 +38,27 @@ export function BotSecretsDialog({ open, data, onClose }: Props) {
   return (
     <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
       <DialogContent
-        className="sm:max-w-xl"
+        // 1. FIXED: Constrain max width (w-[95vw]) and ensure vertical scrolling (max-h-[90vh])
+        // This prevents the modal from growing off-screen on small devices
+        className="sm:max-w-xl w-[95vw] max-h-[90vh] overflow-y-auto"
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader>
+        <DialogHeader className="space-y-3">
           <DialogTitle className="flex items-center gap-2 text-green-600">
-            <Check className="h-5 w-5" />
-            Bot Created Successfully
+            <Check className="h-5 w-5 flex-shrink-0" />
+            <span>Bot Created Successfully</span>
           </DialogTitle>
-          <DialogDescription>
-            The bot <strong>{data.name}</strong> has been registered.
+          <DialogDescription className="text-left">
+            The bot <strong className="break-words">{data.name}</strong> has
+            been registered.
             <br />
             <span
-              className="mt-2 block rounded-md bg-amber-50 p-3 text-amber-900
-                border border-amber-200"
+              className="mt-3 block rounded-md bg-amber-50 p-3 text-amber-900
+                border border-amber-200 text-sm"
             >
-              <AlertTriangle className="mb-1 h-4 w-4 inline mr-2" />
+              <AlertTriangle
+                className="mb-1 h-4 w-4 inline mr-2 align-text-bottom"
+              />
               <strong>Important:</strong> Please copy these credentials now. The{" "}
               <strong>API Secret</strong> will NOT be shown again.
             </span>
@@ -61,7 +66,7 @@ export function BotSecretsDialog({ open, data, onClose }: Props) {
         </DialogHeader>
 
         <div className="grid gap-6 py-4">
-          {/* Webhook URL - Changed to Textarea for better wrapping */}
+          {/* Webhook URL */}
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
               Webhook URL (For your Python Bot)
@@ -70,13 +75,14 @@ export function BotSecretsDialog({ open, data, onClose }: Props) {
               <Textarea
                 readOnly
                 value={data.webhookUrl}
-                className="font-mono text-sm bg-muted resize-none h-auto
-                  min-h-[80px] p-3"
+                // 2. FIXED: 'break-all' forces the long URL to wrap instead of overflowing horizontally
+                className="font-mono text-xs sm:text-sm bg-muted resize-none
+                  h-auto min-h-[80px] p-3 break-all"
               />
               <Button
                 size="icon"
                 variant="outline"
-                className="mt-1"
+                className="mt-1 flex-shrink-0" // 3. FIXED: Prevents button from being squashed
                 onClick={() => copyToClipboard(data.webhookUrl, "webhookUrl")}
                 title="Copy Webhook URL"
               >
@@ -89,22 +95,23 @@ export function BotSecretsDialog({ open, data, onClose }: Props) {
             </div>
           </div>
 
-          {/* API Key - Changed to Textarea */}
+          {/* API Key */}
           <div className="grid gap-2">
             <Label className="text-base font-semibold">API Key</Label>
             <div className="flex items-start gap-2">
               <Textarea
                 readOnly
-                value={data.apiKey}
-                className="font-mono text-sm bg-muted resize-none h-auto
-                  min-h-[60px] p-3"
+                value={data.webhookToken}
+                // 2. FIXED: 'break-all' here too for long keys
+                className="font-mono text-xs sm:text-sm bg-muted resize-none
+                  h-auto min-h-[60px] p-3 break-all"
                 rows={2}
               />
               <Button
                 size="icon"
                 variant="outline"
-                className="mt-1"
-                onClick={() => copyToClipboard(data.apiKey, "apiKey")}
+                className="mt-1 flex-shrink-0"
+                onClick={() => copyToClipboard(data.webhookToken, "apiKey")}
                 title="Copy API Key"
               >
                 {copiedField === "apiKey" ? (
@@ -116,25 +123,26 @@ export function BotSecretsDialog({ open, data, onClose }: Props) {
             </div>
           </div>
 
-          {/* API Secret - Kept as Input for password masking, but made larger */}
+          {/* API Secret */}
           <div className="grid gap-2">
             <Label className="text-base font-semibold text-destructive">
               API Secret
             </Label>
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1">
+            <div className="flex items-start gap-2">
+              {/* 4. FIXED: 'min-w-0' is crucial for flex children to shrink properly */}
+              <div className="relative flex-1 min-w-0">
                 <Input
                   readOnly
                   type={showSecret ? "text" : "password"}
                   value={data.apiSecret}
-                  // Increased height (h-14), padding (p-4), and font size (text-sm)
-                  className="font-mono text-sm h-14 p-4 bg-red-50 border-red-200
-                    text-red-900 pr-12"
+                  className="font-mono text-xs sm:text-sm h-12 sm:h-14 p-3
+                    sm:p-4 bg-red-50 border-red-200 text-red-900 pr-10 sm:pr-12
+                    text-ellipsis overflow-hidden"
                 />
                 <button
                   type="button"
                   onClick={() => setShowSecret(!showSecret)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2
+                  className="absolute right-3 top-1/2 -translate-y-1/2
                     text-red-700 hover:text-red-900"
                 >
                   {showSecret ? (
@@ -147,8 +155,8 @@ export function BotSecretsDialog({ open, data, onClose }: Props) {
               <Button
                 size="icon"
                 variant="outline"
-                className="h-14 w-14 border-red-200 hover:bg-red-50
-                  hover:text-red-600"
+                className="h-12 w-12 sm:h-14 sm:w-14 border-red-200
+                  hover:bg-red-50 hover:text-red-600 flex-shrink-0"
                 onClick={() => copyToClipboard(data.apiSecret, "apiSecret")}
                 title="Copy Secret"
               >
@@ -162,8 +170,13 @@ export function BotSecretsDialog({ open, data, onClose }: Props) {
           </div>
         </div>
 
-        <DialogFooter className="sm:justify-between gap-4 items-center">
-          <p className="text-sm text-muted-foreground font-medium">
+        <DialogFooter
+          className="flex-col sm:flex-row sm:justify-between gap-4 items-center"
+        >
+          <p
+            className="text-sm text-muted-foreground font-medium text-center
+              sm:text-left"
+          >
             Make sure you have copied the API Secret.
           </p>
           <Button onClick={onClose} size="lg" className="w-full sm:w-auto">

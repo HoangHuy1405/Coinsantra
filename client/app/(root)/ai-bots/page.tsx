@@ -1,23 +1,69 @@
 "use client";
 
 import React, { useState } from "react";
-import { BotCard, timeSlot } from "./_components/BotCard";
-import { botDatabase } from "@/entities/mockAiBots";
+import { BotCard } from "./_components/BotCard";
 import AiBotIntro from "./_components/AiBotIntro";
 import { FilterSortBar } from "./_components/FilterSortBar";
 import { PaginationBar } from "../../ui/my_components/PaginationBar";
 import { useRouter } from "next/navigation";
+import {
+  BotResponse,
+  SortOption,
+  TimeWindow,
+} from "@/services/interfaces/botInterfaces";
+import { usePublicBots } from "@/hooks/bot/usePublicBots";
+import { BotConfigDialog } from "./_components/BotConfigDialog";
+import { signIn, useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 
 export default function AiBotPage() {
   const router = useRouter();
-  const [timeWindow, setTimeWindow] = useState<timeSlot>("7d");
-  const [sort, setSort] = useState<"pnl" | "roi" | "copied">("pnl");
+  const { data: session, status } = useSession();
+
+  const [timeWindow, setTimeWindow] = useState<TimeWindow>("7d");
+  const [sort, setSort] = useState<SortOption>("pnl");
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setPage] = useState(1);
+  const pageSize = 9;
 
-  const bots = botDatabase;
+  const [copyingBotId, setCopyingBotId] = useState<string | null>(null);
+  const handleCopy = (id: string) => {
+    // 3. Check authentication status
+    if (status === "unauthenticated") {
+      toast.error("Please log in to copy this strategy");
 
-  const handleCopy = (id: string) => {};
+      // 4. Redirect to login, and return here after success
+      router.push("/login");
+      return;
+    }
+    // Optional: Prevent action if session is still loading
+    if (status === "loading") {
+      return;
+    }
+    setCopyingBotId(id);
+  };
+
+  // const bots = botDatabase;
+  const { data, isLoading, isError } = usePublicBots({
+    page: currentPage,
+    size: pageSize,
+    search,
+    sort,
+    timeWindow,
+  });
+  const bots = data?.data?.result || [];
+  const meta = data?.data?.meta;
+  const totalPages = meta?.pages || 1;
+  const totalItems = meta?.total || 0;
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setPage(1);
+  };
+  const handleSortChange = (val: any) => {
+    setSort(val);
+    setPage(1);
+  };
   const onNavigateToBotDetail = (id: string) => {
     router.push(`/ai-bots/${id}`);
   };
@@ -28,7 +74,7 @@ export default function AiBotPage() {
     >
       {/* Intro section */}
       <AiBotIntro
-        totalBots={botDatabase.length}
+        totalBots={totalItems}
         activeTraders={53244}
         totalValue={351000}
       />
@@ -39,7 +85,7 @@ export default function AiBotPage() {
         <FilterSortBar
           enableSearch={true}
           searchValue={search}
-          onSearchChange={setSearch}
+          onSearchChange={handleSearchChange}
           sortValue={sort}
           onSortChange={setSort}
           timeWindow={timeWindow}
@@ -52,41 +98,53 @@ export default function AiBotPage() {
       <section
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full"
       >
-        {bots.map((bot) => (
+        {bots.map((bot: BotResponse) => (
           <BotCard
             key={bot.id}
             id={bot.id}
             name={bot.name}
-            roi1d={bot.roi1d}
-            roi7d={bot.roi7d}
-            roi30d={bot.roi30d}
-            roiAllTime={bot.roiAllTime}
-            pnl1d={bot.pnl1d}
-            pnl7d={bot.pnl7d}
-            pnl30d={bot.pnl30d}
-            maxDrawdown={bot.maxDrawdown}
-            assets={bot.assets}
-            activeUsers={bot.activeUsers}
+            roi1d={bot.stats?.roi24h || 0} // Fallback or mapping needed if you have distinct fields
+            roi7d={0}
+            roi30d={0}
+            roiAllTime={0} // Add to backend if needed
+            pnl1d={bot.stats?.pnl24h || 0}
+            pnl7d={0}
+            pnl30d={0}
+            maxDrawdown={0} // Add to backend if needed
+            coin={bot.tradingConfig?.coinSymbol || ""} // "BTC"
+            activeUsers={bot.stats?.copyingUsers || 0}
             onCopy={handleCopy}
             onClick={onNavigateToBotDetail}
             timeWindow={timeWindow}
-            priority="pnl"
+            priority={sort}
           />
         ))}
       </section>
       {/* Pagination */}
-      <PaginationBar
-        totalItems={bots.length}
-        itemsPerPage={9}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
+      <div className="mt-8">
+        <PaginationBar
+          totalItems={totalItems}
+          itemsPerPage={pageSize}
+          currentPage={currentPage}
+          onPageChange={setPage}
+        />
+      </div>
 
       {/* how to section */}
       <section id="how-to">
         <h2>How To Use</h2>
         <p>Here is the tutorial...</p>
       </section>
+
+      <BotConfigDialog
+        isOpen={!!copyingBotId} // Open if we have an ID
+        botId={copyingBotId || ""} // Pass the ID to the form
+        onClose={() => setCopyingBotId(null)} // Clear ID to close
+        onSuccess={() => {
+          console.log("Bot copied successfully! Refreshing data...");
+          // optional: router.refresh() or refetch data
+        }}
+      />
     </main>
   );
 }

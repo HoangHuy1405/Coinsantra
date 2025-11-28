@@ -8,7 +8,7 @@ import {
   UserProfile,
   useUserService,
 } from "@/services/userService";
-import { ApiResponse } from "@/lib/type";
+import { ApiResponse } from "@/services/constants/type";
 
 export function useUpdateProfile() {
   const userService = useUserService();

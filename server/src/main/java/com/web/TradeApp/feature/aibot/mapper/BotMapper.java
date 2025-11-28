@@ -12,17 +12,16 @@ import org.mapstruct.Builder;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE, builder = @Builder(disableBuilder = true))
 public interface BotMapper {
-    // --- Ignoring System and Operational Fields ---
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    // Ignore real-time/status fields
-    @Mapping(target = "lastSignalAt", ignore = true)
-    @Mapping(target = "lastErrorMessage", ignore = true)
-    // Ignore generated operational fields
-    @Mapping(target = "apiUrl", ignore = true)
-    @Mapping(target = "apiKey", ignore = true)
-    @Mapping(target = "apiSecret", ignore = true)
+    // // --- Ignoring System and Operational Fields ---
+    // @Mapping(target = "id", ignore = true)
+    // @Mapping(target = "createdAt", ignore = true)
+    // @Mapping(target = "updatedAt", ignore = true)
+    // // Ignore real-time/status fields
+    // @Mapping(target = "lastSignalAt", ignore = true)
+    // @Mapping(target = "lastErrorMessage", ignore = true)
+    // // Ignore generated operational fields
+    // @Mapping(target = "apiUrl", ignore = true)
+    // @Mapping(target = "apiSecret", ignore = true)
     // --- Setting Defaults and Mapping Input Fields ---
     @Mapping(target = "status", expression = "java(com.web.TradeApp.feature.aibot.enums.BotStatus.ACTIVE)")
     @Mapping(target = "name", source = "name")
@@ -39,7 +38,6 @@ public interface BotMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "status", ignore = true) // Status is usually managed via state transitions, not edit form
     @Mapping(target = "apiUrl", ignore = true) // Webhook URL shouldn't change via basic edit
-    @Mapping(target = "apiKey", ignore = true)
     @Mapping(target = "apiSecret", ignore = true)
     // Map the editable fields
     @Mapping(target = "name", source = "name")

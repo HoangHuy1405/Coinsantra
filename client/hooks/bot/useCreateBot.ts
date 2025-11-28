@@ -1,4 +1,5 @@
-import { useBotService, BotSecretResponse } from "@/services/botService";
+import { useBotService } from "@/services/botService";
+import { BotSecretResponse } from "@/services/interfaces/botInterfaces";
 import { BotFormInputs } from "@/services/schemas/bot";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";

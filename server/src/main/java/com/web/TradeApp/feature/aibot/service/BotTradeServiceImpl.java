@@ -2,19 +2,19 @@ package com.web.TradeApp.feature.aibot.service;
 
 import com.web.TradeApp.exception.IdInvalidException;
 import com.web.TradeApp.exception.InsufficientBalanceException;
-import com.web.TradeApp.feature.admin.coin.entity.Coin;
-import com.web.TradeApp.feature.admin.coin.entity.CoinHolding;
-import com.web.TradeApp.feature.admin.coin.entity.Transaction;
-import com.web.TradeApp.feature.admin.coin.entity.Wallet;
-import com.web.TradeApp.feature.admin.coin.repository.CoinHoldingRepository;
-import com.web.TradeApp.feature.admin.coin.repository.CoinRepository;
-import com.web.TradeApp.feature.admin.coin.repository.TransactionRepository;
-import com.web.TradeApp.feature.admin.coin.repository.WalletRepository;
-import com.web.TradeApp.feature.admin.coin.service.AdminService;
+import com.web.TradeApp.feature.admin.service.AdminService;
 import com.web.TradeApp.feature.aibot.model.BotSubscription;
 import com.web.TradeApp.feature.aibot.model.BotTrade;
 import com.web.TradeApp.feature.aibot.repository.BotSubscriptionRepository;
 import com.web.TradeApp.feature.aibot.repository.BotTradeRepository;
+import com.web.TradeApp.feature.coin.entity.Coin;
+import com.web.TradeApp.feature.coin.entity.CoinHolding;
+import com.web.TradeApp.feature.coin.entity.Transaction;
+import com.web.TradeApp.feature.coin.entity.Wallet;
+import com.web.TradeApp.feature.coin.repository.CoinHoldingRepository;
+import com.web.TradeApp.feature.coin.repository.CoinRepository;
+import com.web.TradeApp.feature.coin.repository.TransactionRepository;
+import com.web.TradeApp.feature.coin.repository.WalletRepository;
 import com.web.TradeApp.feature.common.entity.BaseTrade;
 
 import lombok.RequiredArgsConstructor;
@@ -142,7 +142,7 @@ public class BotTradeServiceImpl implements BotTradeService {
 
                 // 8. Save Records
                 saveTransaction(userWallet, coin, BaseTrade.TradeType.BUY, finalQuantity, price, grossUsdtToSpend);
-                saveBotTrade(sub, BaseTrade.TradeType.BUY, finalQuantity, price, grossUsdtToSpend);
+                saveBotTrade(sub, BaseTrade.TradeType.BUY, finalQuantity, price, grossUsdtToSpend, grossUsdtToSpend);
 
                 log.info("✅ BUY: User {} | Spent {} USDT | Got {} {}", sub.getUserId(), grossUsdtToSpend, finalQuantity,
                                 coin.getSymbol());
@@ -250,7 +250,7 @@ public class BotTradeServiceImpl implements BotTradeService {
                 // Fee = Raw Value - Final Value Received
                 BigDecimal totalFee = rawUsdtValue.subtract(finalUsdt);
                 saveTransaction(userWallet, coin, BaseTrade.TradeType.SELL, quantityToSell, price, totalFee);
-                saveBotTrade(sub, BaseTrade.TradeType.SELL, quantityToSell, price, finalUsdt);
+                saveBotTrade(sub, BaseTrade.TradeType.SELL, quantityToSell, price, finalUsdt, totalFee);
 
                 log.info("✅ SELL: User {} | Sold {} {} | Got {} USDT", sub.getUserId(), quantityToSell,
                                 coin.getSymbol(), finalUsdt);
@@ -272,7 +272,7 @@ public class BotTradeServiceImpl implements BotTradeService {
         }
 
         private void saveBotTrade(BotSubscription sub, BaseTrade.TradeType type, BigDecimal qty, BigDecimal price,
-                        BigDecimal notional) {
+                        BigDecimal notional, BigDecimal feeOrNotional) {
                 BotTrade trade = BotTrade.builder()
                                 .bot(sub.getBot())
                                 // Now we must fetch the User Wallet again or pass it down to ensure BaseTrade
@@ -286,6 +286,7 @@ public class BotTradeServiceImpl implements BotTradeService {
                                 .priceAtExecution(price)
                                 .notionalValue(notional)
                                 .feeBotApplied(BigDecimal.ZERO)
+                                .feeTradeApplied(type == BaseTrade.TradeType.SELL ? feeOrNotional : BigDecimal.ZERO)
                                 .pnl(null)
                                 .build();
                 botTradeRepo.save(trade);

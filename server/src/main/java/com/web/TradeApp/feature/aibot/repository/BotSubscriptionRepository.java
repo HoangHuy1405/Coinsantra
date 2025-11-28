@@ -38,4 +38,6 @@ public interface BotSubscriptionRepository extends JpaRepository<BotSubscription
 
     // Optional: Find specific subscription for a user/bot pair
     Optional<BotSubscription> findByUserIdAndBotId(UUID userId, UUID botId);
+
+    boolean existsByUserIdAndBotId(UUID userId, UUID botId);
 }

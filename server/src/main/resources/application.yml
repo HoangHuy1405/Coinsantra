@@ -45,6 +45,7 @@ server:
 
 application:
   backend-url: ${APP_BACKEND_URL:http://localhost:8080}
+  webhook-url: ${APP_WEBHOOK_URL}
   security:
     jwt:
       secret-key: ${JWT_SECRET_KEY}
