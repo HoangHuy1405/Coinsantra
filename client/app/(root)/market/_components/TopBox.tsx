@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/shadcn/card";
-import { COIN_LOGOS } from "@/app/ui/widgets/constant";
+import { COIN_LOGOS } from "@/services/constants/coinConstant";
 
 export default function TopBox({
   title,

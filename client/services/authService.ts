@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import { ApiResponse } from "@/lib/type";
+import { ApiResponse } from "@/services/constants/type";
 
 // ---------- Types ----------
 

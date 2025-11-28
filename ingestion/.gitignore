@@ -1,0 +1,22 @@
+# Azure Functions Secrets (CRITICAL)
+local.settings.json
+
+# Maven Build Folder
+target/
+bin/
+
+# IDE Settings (VS Code & IntelliJ)
+
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Local Storage Emulator (The junk folders you saw)
+__blobstorage__
+__queuestorage__
+__azurite_db*__.json
+
+# Azure Function Logs
+*.log

@@ -18,15 +18,17 @@ import {
 import { ChevronRight, LucideIcon } from "lucide-react";
 import Link from "next/link";
 
-interface NavMainProps {
+export interface NavMainProps {
   items: {
     title: string;
     url: string;
     icon?: LucideIcon;
     isActive?: boolean;
+    adminOnly?: boolean;
     items?: {
       title: string;
       url: string;
+      adminOnly?: boolean;
     }[];
   }[];
 }

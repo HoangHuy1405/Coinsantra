@@ -1,5 +1,6 @@
 package com.web.TradeApp.utils;
 
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -82,5 +83,13 @@ public class SecurityUtil {
     private SecretKey getSecretKey() {
         byte[] keyBytes = Base64.from(secretString).decode();
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, JwtUtil.JWT_ALGORITHM.getName());
+    }
+
+    public String generateSecureString(int length) {
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[length];
+        random.nextBytes(bytes);
+        // Convert to Hex or Base64 (UrlSafe)
+        return java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 }

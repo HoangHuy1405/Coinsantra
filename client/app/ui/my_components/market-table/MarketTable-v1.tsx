@@ -6,7 +6,7 @@ import { ArrowUpRight, ArrowDownRight, Info, TrendingUp } from "lucide-react";
 import { Button } from "@/app/ui/shadcn/button";
 import { useLiveMarketStream } from "@/hooks/ws/useLiveMarketStream";
 import { MarketSparkline } from "../charts/MarketSparkline";
-import { COIN_LOGOS } from "../../widgets/constant";
+import { COIN_LOGOS } from "../../../../services/constants/coinConstant";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../data-table/data-table";
 import { useMemo } from "react";

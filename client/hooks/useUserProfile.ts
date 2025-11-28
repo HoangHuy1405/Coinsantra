@@ -1,6 +1,6 @@
 "use client";
+import { useUserService } from "@/services/userService";
 import { useQuery } from "@tanstack/react-query";
-import { useUserService } from "@/hooks/useUserService";
 import toast from "react-hot-toast";
 
 export function useUserProfile() {

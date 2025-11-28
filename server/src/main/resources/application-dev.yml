@@ -13,36 +13,3 @@ spring:
       hibernate:
         format-sql: true
     database: mysql
-    #database-platform: org.hibernate.dialect.MySQL8Dialect
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          trust: "*"
-          auth: true
-          starttls:
-            enable: true
-        connectiontimout: 5000
-        timeout: 3000
-        writetimeout: 5000
-
-application:
-  security:
-    jwt:
-      secret-key: ${JWT_SECRET_KEY}
-      access-expiration: ${JWT_ACCESS_EXPIRATION}
-      refresh-expiration: ${JWT_REFRESH_EXPIRATION}
-
-google:
-  oauth2:
-    client-id: ${GOOGLE_CLIENT_ID}
-    client-secret: ${GOOGLE_CLIENT_SECRET}
-
-cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME}
-  api-key: ${CLOUDINARY_API_KEY}
-  api-secret: ${CLOUDINARY_API_SECRET}

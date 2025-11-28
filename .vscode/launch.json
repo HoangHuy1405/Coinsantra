@@ -2,22 +2,24 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Spring Boot-TradeAppApplication<server>",
+      "name": "Spring Boot - DEV (Local MySQL)",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "mainClass": "com.web.TradeApp.TradeAppApplication",
       "projectName": "server",
       "args": "",
+      "vmArgs": "-Dspring.profiles.active=dev",
       "envFile": "${workspaceFolder}/.env"
     },
     {
       "type": "java",
-      "name": "Spring Boot-TradeAppApplication<TradeApp-server>",
+      "name": "Spring Boot - PROD (Azure SQL)",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "mainClass": "com.web.TradeApp.TradeAppApplication",
       "projectName": "TradeApp-server",
       "args": "",
+      "vmArgs": "-Dspring.profiles.active=prod",
       "envFile": "${workspaceFolder}/.env"
     },
     {
@@ -25,16 +27,20 @@
       "request": "launch",
       "name": "Next.js: Debug Development Server",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
+      "runtimeArgs": ["run", "dev"],
       "cwd": "${workspaceFolder}/client",
       "console": "integratedTerminal",
       "port": 9229,
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Attach to Java Functions",
+      "type": "java",
+      "request": "attach",
+      "hostName": "127.0.0.1",
+      "port": 5005,
+      "preLaunchTask": "func: host start"
     }
-  ]
+  ],
+  "version": "0.2.0"
 }

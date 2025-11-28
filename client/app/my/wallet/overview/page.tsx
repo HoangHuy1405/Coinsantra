@@ -6,7 +6,7 @@ import AITradeStatus from "./_components/AITradeStatus";
 import PortfolioAllocationChart from "./_components/PortfolioAllocationChart";
 import ActivityHistoryTable from "@/app/ui/my_components/activity-history-table/ActivityHistoryTable";
 import { mockActivities } from "@/entities/mockActivities";
-import { SYMBOLS } from "@/app/ui/widgets/constant";
+import { SYMBOLS } from "@/services/constants/coinConstant";
 import { MarketTable } from "@/app/ui/my_components/market-table/MarketTable";
 
 export default function page() {

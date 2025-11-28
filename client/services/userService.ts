@@ -1,4 +1,5 @@
-import { ApiResponse } from "@/lib/type";
+import useAxiosAuth from "@/hooks/useAxiosAuth";
+import { ApiResponse } from "@/services/constants/type";
 import { AxiosInstance } from "axios";
 
 export type UserProfile = {
@@ -19,7 +20,7 @@ export type ProfileUpdateRequest = {
   lastName: string;
   phoneNum: string;
   description?: string;
-}
+};
 
 export const UserService = (client: AxiosInstance) => ({
   async getProfile() {
@@ -28,11 +29,13 @@ export const UserService = (client: AxiosInstance) => ({
     return res.data.data;
   },
 
-  async updateProfile(payload: ProfileUpdateRequest): Promise<ApiResponse<UserProfile>> {
+  async updateProfile(
+    payload: ProfileUpdateRequest,
+  ): Promise<ApiResponse<UserProfile>> {
     const res = await client.put<ApiResponse<UserProfile>>(
       "/users/profile",
       payload,
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json" } },
     );
 
     console.log("Update profile response:", res);
@@ -40,4 +43,7 @@ export const UserService = (client: AxiosInstance) => ({
   },
 });
 
-
+export function useUserService() {
+  const axiosAuth = useAxiosAuth();
+  return UserService(axiosAuth); // secure client with interceptors
+}

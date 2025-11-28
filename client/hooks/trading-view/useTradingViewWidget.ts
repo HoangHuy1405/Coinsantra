@@ -1,38 +1,41 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from "react";
 
-const useTradingViewWidget = (src: string, config: Record<string, unknown>, height = 600) => {
-    const containerRef = useRef<HTMLDivElement | null>(null);
+const useTradingViewWidget = (
+  src: string,
+  config: Record<string, unknown>,
+  height = 600,
+) => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        if (!containerRef.current) return;
-        if (containerRef.current.dataset.loaded) return;
+  useEffect(() => {
+    if (!containerRef.current) return;
+    if (containerRef.current.dataset.loaded) return;
 
-        const isAutoSize = config.autoSize === true;
+    const isAutoSize = config.autoSize === true;
 
-        const styleHeight = isAutoSize ? "100%" : `${height}px`;
+    const styleHeight = isAutoSize ? "100%" : `${height}px`;
 
-        containerRef.current.innerHTML = `<div class="tradingview-widget-container__widget" style="width: 100%; height: ${styleHeight};"></div>`;
+    containerRef.current.innerHTML = `<div class="tradingview-widget-container__widget" style="width: 100%; height: ${styleHeight};"></div>`;
 
-        const script = document.createElement("script");
-        script.src = src;
-        script.async = true;
-        script.innerHTML = JSON.stringify(config);
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.innerHTML = JSON.stringify(config);
 
-        containerRef.current.appendChild(script);
-        containerRef.current.dataset.loaded = 'true';
+    containerRef.current.appendChild(script);
+    containerRef.current.dataset.loaded = "true";
 
-        return () => {
-            if (containerRef.current) {
-                containerRef.current.innerHTML = '';
-                delete containerRef.current.dataset.loaded;
-            }
-        }
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.innerHTML = "";
+        delete containerRef.current.dataset.loaded;
+      }
+    };
+  }, [src, config, height]);
 
-    }, [src, config, height])
+  return containerRef;
+};
 
-    return containerRef;
-}
-
-export default useTradingViewWidget
+export default useTradingViewWidget;

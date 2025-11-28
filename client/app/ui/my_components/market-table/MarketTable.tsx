@@ -15,7 +15,7 @@ import {
 } from "@/hooks/ws/useLiveMarketStream";
 
 import { MarketSparkline } from "../charts/MarketSparkline";
-import { COIN_LOGOS } from "../../widgets/constant";
+import { COIN_LOGOS } from "../../../../services/constants/coinConstant";
 import DataTable from "../data-table/AgDataTable";
 
 interface MarketTableProps {
@@ -86,7 +86,7 @@ export function MarketTable({
           params.value == null
             ? ""
             : Number(params.value).toLocaleString(undefined, {
-              maximumFractionDigits: 2,
+              maximumFractionDigits: 7,
             }),
       },
       {
@@ -150,7 +150,7 @@ export function MarketTable({
                 </Button>
               </Link>
 
-              <Link href={`/market/${s}/trade`}>
+              <Link href={`/trade/${s}`}>
                 <Button size="icon" variant="ghost">
                   <TrendingUp className="w-4 h-4" />
                 </Button>
