@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { Command, Search } from "lucide-react";
 import { searchCoins } from "@/lib/actions/gecko.actions";
-import { Crypto } from "@/entities/Crypto";
+import { Coin } from "@/entities/Coin/Coin";
 import { useRouter } from "next/navigation";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/app/ui/shadcn/command";
 
 interface SearchCommandProps {
-    initial: Crypto[];
+    initial: Coin[];
 }
 
 export default function SearchCommand({ initial }: SearchCommandProps) {
@@ -18,7 +18,7 @@ export default function SearchCommand({ initial }: SearchCommandProps) {
     const [open, setOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
-    const [cryptos, setCryptos] = useState<Crypto[]>(initial);
+    const [cryptos, setCryptos] = useState<Coin[]>(initial);
     const [shortcut, setShortcut] = useState("Ctrl + K");
 
     const isSearchMode = !!searchTerm.trim();
@@ -63,7 +63,7 @@ export default function SearchCommand({ initial }: SearchCommandProps) {
         }
     }, 500);
 
-    const handleSelectCrypto = (coin: Crypto) => {
+    const handleSelectCrypto = (coin: Coin) => {
         router.push(`/trade/${coin.symbol.toUpperCase()}`);
         setOpen(false);
         setSearchTerm("");

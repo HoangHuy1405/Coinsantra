@@ -7,7 +7,7 @@ import PortfolioAllocationChart from "./_components/PortfolioAllocationChart";
 import ActivityHistoryTable from "@/app/ui/my_components/activity-history-table/ActivityHistoryTable";
 import { mockActivities } from "@/entities/mockActivities";
 import { SYMBOLS } from "@/services/constants/coinConstant";
-import { MarketTable } from "@/app/ui/my_components/market-table/MarketTable";
+import { MarketTable } from "@/app/ui/my_components/market-table/MarketTable-v2";
 
 export default function page() {
   return (

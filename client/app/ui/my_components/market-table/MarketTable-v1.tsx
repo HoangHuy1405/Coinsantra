@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, ArrowDownRight, Info, TrendingUp } from "lucide-react";
 import { Button } from "@/app/ui/shadcn/button";
-import { useLiveMarketStream } from "@/hooks/ws/useLiveMarketStream";
+import { useLiveMarketStream } from "@/hooks/ws/useLiveMarketStream-v1";
 import { MarketSparkline } from "../charts/MarketSparkline";
 import { COIN_LOGOS } from "../../../../services/constants/coinConstant";
 import { ColumnDef } from "@tanstack/react-table";
