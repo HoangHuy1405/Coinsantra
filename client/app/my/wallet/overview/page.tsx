@@ -6,10 +6,11 @@ import AITradeStatus from "./_components/AITradeStatus";
 import PortfolioAllocationChart from "./_components/PortfolioAllocationChart";
 import ActivityHistoryTable from "@/app/ui/my_components/activity-history-table/ActivityHistoryTable";
 import { mockActivities } from "@/entities/mockActivities";
-import { SYMBOLS } from "@/services/constants/coinConstant";
-import { MarketTable } from "@/app/ui/my_components/market-table/MarketTable-v2";
+import MarketTable from "@/app/ui/my_components/market-table/MarketTable";
+import { getCachedMarketData } from "@/lib/actions/gecko.actions";
 
-export default function page() {
+export default async function page() {
+  const initialCoins = await getCachedMarketData(1000);
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
       {/* Row 1: Total Assets */}
@@ -32,13 +33,13 @@ export default function page() {
 
       {/* Row 4: Market + AI Trade Status */}
       <div className="col-span-1 md:col-span-8 w-full">
-        <MarketTable
-          symbols={SYMBOLS}
-          showLimit={6}
-          enableActions={true}
-          enablePagination={false}
-          enableSearch={false}
-          enableSorting={false}
+        <MarketTable initialData={initialCoins}
+        // symbols={SYMBOLS}
+        // showLimit={6}
+        // enableActions={true}
+        // enablePagination={false}
+        // enableSearch={false}
+        // enableSorting={false}
         />
       </div>
       <div className="col-span-1 md:col-span-4 w-full">

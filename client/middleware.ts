@@ -7,26 +7,45 @@ export default withAuth(
     const user = token?.user;
     const pathname = req.nextUrl.pathname;
 
-    // 🔐 1. Protect /my/* for authenticated users
-    if (pathname.startsWith("/my")) {
-      if (!token) {
-        return NextResponse.redirect(new URL("/login", req.url));
-      }
+    const isAuthRoute = ["/login", "/register", "/verify"].some((route) =>
+      pathname.startsWith(route)
+    );
+
+    if (token && isAuthRoute) {
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
-    // If not admin, redirect to /403 or homepage
-    if (!user?.roles?.includes("ADMIN")) {
-      return NextResponse.redirect(new URL("/403", req.url));
+
+    if (pathname.startsWith("/my/dashboard")) {
+      if (!user?.roles?.includes("ADMIN")) {
+        return NextResponse.redirect(new URL("/403", req.url));
+      }
     }
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token, // user must be logged in at least
+      authorized: ({ token, req }) => {
+        const pathname = req.nextUrl.pathname;
+
+        if (
+          pathname.startsWith("/login") ||
+          pathname.startsWith("/register") ||
+          pathname.startsWith("/verify")
+        ) {
+          return true;
+        }
+
+        return !!token;
+      },
     },
-  },
+  }
 );
 
-// Apply only to admin routes
 export const config = {
-  matcher: ["/my/dashboard/(admin)/:path*", "/my/:path"],
+  matcher: [
+    "/my/:path*",
+    "/login",
+    "/register",
+    "/verify"
+  ],
 };

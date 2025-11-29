@@ -14,12 +14,14 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "../../shadcn/card";
-
 import { Sparkline } from "../Sparkline/Sparkline";
 import { useLiveMarket } from "@/hooks/ws/useLiveMarketStream";
 import { Input } from "../../shadcn/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../shadcn/select";
 import { Button } from "../../shadcn/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../shadcn/tooltip";
+import Link from "next/link";
+import { Info, TrendingUp } from "lucide-react";
 
 interface MarketTableProps {
     initialData: MarketCoin[];
@@ -38,7 +40,7 @@ export default function MarketTable({ initialData }: MarketTableProps) {
 
     // LOGIC FILTERING 
     const filteredData = useMemo(() => {
-        if (!globalFilter) return data; // Nếu không tìm gì thì trả về full
+        if (!globalFilter) return data;
         const lowerFilter = globalFilter.toLowerCase();
 
         return data.filter(coin =>
@@ -67,7 +69,7 @@ export default function MarketTable({ initialData }: MarketTableProps) {
                 accessorKey: 'market_cap_rank',
                 header: '#',
                 cell: (info) => (
-                    <span className="text-gray-500 font-medium">
+                    <span className="text-gray-500 ">
                         {info.getValue() as number}
                     </span>
                 ),
@@ -120,6 +122,50 @@ export default function MarketTable({ initialData }: MarketTableProps) {
                     const history = info.getValue() as number[];
                     const isPositive = (info.row.original.changePercent >= 0);
                     return <Sparkline data={history} color={isPositive ? '#16a34a' : '#dc2626'} />;
+                },
+            },
+            {
+                id: "actions", // Cột này không cần accessorKey vì không hiện data trực tiếp
+                header: "Actions",
+                enableSorting: false,
+                cell: ({ row }) => {
+                    const coin = row.original;
+
+                    return (
+                        <div className="flex items-center gap-2">
+                            {/* Nút Details */}
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600">
+                                            <Link href={`/market/${coin.id}`}>
+                                                <Info className="h-4 w-4" />
+                                            </Link>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>View Details</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+
+                            {/* Nút Trade */}
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-green-50 hover:text-green-600">
+                                            <Link href={`/trade/${coin.symbol}`}>
+                                                <TrendingUp className="h-4 w-4" />
+                                            </Link>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Trade {coin.symbol}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                    );
                 },
             },
         ],
@@ -208,11 +254,12 @@ export default function MarketTable({ initialData }: MarketTableProps) {
                                 table.setPageSize(Number(value));
                                 table.setPageIndex(0);
                             }}
+
                         >
-                            <SelectTrigger className="h-8 w-[70px]">
+                            <SelectTrigger className="h-8 ">
                                 <SelectValue placeholder={table.getState().pagination.pageSize} />
                             </SelectTrigger>
-                            <SelectContent side="top">
+                            <SelectContent side="top" >
                                 {[10, 20, 30, 40, 50].map((pageSize) => (
                                     <SelectItem key={pageSize} value={`${pageSize}`}>
                                         {pageSize}
