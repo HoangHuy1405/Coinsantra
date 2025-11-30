@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Settings, StopCircle } from "lucide-react";
+import { Settings, StopCircle, Play } from "lucide-react";
 import { Button } from "@/app/ui/shadcn/button";
 import { Badge } from "@/app/ui/shadcn/badge";
 import { BotSubscription } from "@/services/interfaces/botSubInterfaces";
@@ -10,12 +10,15 @@ import Image from "next/image";
 
 interface SubscriptionColumnsProps {
   onNavigateToDetail: (subscriptionId: string) => void;
-  onStopSubscription: (subscriptionId: string, botName: string) => void;
+  onToggleSubscription: (
+    subscriptionId: string,
+    currentStatus: boolean,
+  ) => void;
 }
 
 export function getSubscriptionColumns({
   onNavigateToDetail,
-  onStopSubscription,
+  onToggleSubscription,
 }: SubscriptionColumnsProps): ColumnDef<BotSubscription>[] {
   return [
     {
@@ -141,19 +144,26 @@ export function getSubscriptionColumns({
               <Settings className="h-4 w-4" />
               Manage
             </Button>
-            {sub.active && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 text-destructive hover:bg-destructive/10
-                  hover:text-destructive"
-                onClick={() =>
-                  onStopSubscription(sub.subscriptionId, sub.botName)
-                }
-              >
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`gap-2 ${
+                sub.active
+                  ? `text-destructive hover:bg-destructive/10
+                    hover:text-destructive`
+                  : `text-green-600 hover:bg-green-500/10 hover:text-green-600
+                    dark:text-green-400`
+                }`}
+              onClick={() =>
+                onToggleSubscription(sub.subscriptionId, sub.active)
+              }
+            >
+              {sub.active ? (
                 <StopCircle className="h-4 w-4" />
-              </Button>
-            )}
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+            </Button>
           </div>
         );
       },

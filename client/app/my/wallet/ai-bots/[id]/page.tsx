@@ -10,6 +10,8 @@ import PerformanceDashboard from "./_components/PerformanceDashboard";
 import WalletAllocation from "./_components/WalletAllocation";
 import BotConfiguration from "./_components/BotConfiguration";
 import { Button } from "@/app/ui/shadcn/button";
+import { ArrowLeft } from "lucide-react";
+import { useBotSub } from "@/hooks/bot/useBotSub";
 
 export default function MySubscriptionDetail() {
   const router = useRouter();
@@ -23,12 +25,14 @@ export default function MySubscriptionDetail() {
     subscriptionId,
     timeframe,
   );
+  const { toggleMutation } = useBotSub();
 
   const handleBack = () => {
     router.push("/my/wallet/ai-bots");
   };
 
   const handleToggleBotStatus = (enabled: boolean) => {
+    toggleMutation.mutate({ id: subscriptionId, enable: enabled });
     if (enabled) {
       toast.success("Bot started successfully");
     } else {
@@ -66,12 +70,20 @@ export default function MySubscriptionDetail() {
       className="mx-auto max-w-[1600px] space-y-6 animate-in fade-in
         duration-500"
     >
+      <Button
+        variant="ghost"
+        onClick={handleBack}
+        className="gap-2"
+        type="button"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Bot List
+      </Button>
       <SubscriptionHeader
         coin={subscription.coin}
         botName={subscription.botName}
         tradingPair={subscription.tradingPair}
-        isActive={subscription.isActive}
-        onBack={handleBack}
+        isActive={subscription.active}
         onToggleStatus={handleToggleBotStatus}
       />
 

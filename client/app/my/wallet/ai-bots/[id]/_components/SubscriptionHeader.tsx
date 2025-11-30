@@ -14,7 +14,6 @@ interface SubscriptionHeaderProps {
   botName: string;
   tradingPair: string;
   isActive: boolean;
-  onBack: () => void;
   onToggleStatus: (enabled: boolean) => void;
 }
 
@@ -23,7 +22,6 @@ export default function SubscriptionHeader({
   botName,
   tradingPair,
   isActive,
-  onBack,
   onToggleStatus,
 }: SubscriptionHeaderProps) {
   const logoUrl = COIN_LOGOS[coin];
@@ -35,15 +33,6 @@ export default function SubscriptionHeader({
           md:justify-between"
       >
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onBack}
-            className="shrink-0"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-
           <div className="flex items-center gap-4">
             {logoUrl ? (
               <Image

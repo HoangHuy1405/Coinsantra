@@ -14,14 +14,20 @@ import { Label } from "@/app/ui/shadcn/label";
 import { Badge } from "@/app/ui/shadcn/badge";
 import { Bot, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export default function AITradeStatus() {
+  const router = useRouter();
   const [aiEnabled, setAiEnabled] = useState(true);
 
   const todayPnL = 3.2;
   const weekPnL = 24.8;
   const isPositiveToday = todayPnL >= 0;
   const isPositiveWeek = weekPnL >= 0;
+
+  function navigateToMyBot() {
+    router.push("/my/wallet/ai-bots");
+  }
 
   return (
     <Card className="w-full h-full border border-border shadow-sm bg-card">
@@ -47,21 +53,6 @@ export default function AITradeStatus() {
               Automated trading assistant
             </CardDescription>
           </div>
-        </div>
-
-        {/* Right side: Switch (drops below when <1000px) */}
-        <div
-          className="flex items-center gap-2 w-full max-[1000px]:justify-start
-            max-[1000px]:pt-2"
-        >
-          <Label htmlFor="ai-switch" className="text-sm whitespace-nowrap">
-            {aiEnabled ? "Enabled" : "Disabled"}
-          </Label>
-          <Switch
-            id="ai-switch"
-            checked={aiEnabled}
-            onCheckedChange={setAiEnabled}
-          />
         </div>
       </CardHeader>
 
@@ -140,6 +131,7 @@ export default function AITradeStatus() {
         <Button
           variant="outline"
           className="w-full hover:bg-primary/10 transition-colors"
+          onClick={navigateToMyBot}
         >
           Configure AI Trade
         </Button>

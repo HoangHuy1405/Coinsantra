@@ -15,7 +15,7 @@ export function useBotSub() {
     mutationFn: (data: BotCopyRequest) => botSubService.copyBot(data),
     onSuccess: () => {
       toast.success("Bot copied successfully");
-      queryClient.invalidateQueries({ queryKey: ["bot-subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["user-subscriptions"] });
     },
     onError: (error: any) => {
       console.error("Create Bot Error:", error);
@@ -33,7 +33,7 @@ export function useBotSub() {
       botSubService.updateBotSub(id, payload),
     onSuccess: () => {
       toast.success("Configuration updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["bot-subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["user-subscriptions"] });
       queryClient.invalidateQueries({ queryKey: ["subscription-detail"] });
     },
     onError: (error: any) => {
@@ -44,9 +44,26 @@ export function useBotSub() {
     },
   });
 
+  const toggleMutation = useMutation({
+    mutationFn: ({ id, enable }: { id: string; enable: boolean }) =>
+      botSubService.toggleBotSubscriptionStatus(id, enable),
+    onSuccess: () => {
+      toast.success("Bot status toggled successfully");
+      queryClient.invalidateQueries({ queryKey: ["user-subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription-detail"] });
+    },
+    onError: (error: any) => {
+      console.error("Toggle Bot Status Error:", error);
+      const msg =
+        error?.response?.data?.message || "Failed to toggle bot status";
+      toast.error(msg);
+    },
+  });
+
   return {
     createMutation,
     updateMutation,
+    toggleMutation,
     isPending: createMutation.isPending || updateMutation.isPending,
   };
 }

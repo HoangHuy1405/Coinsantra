@@ -97,6 +97,16 @@ export const BotSubService = (client: AxiosInstance) => ({
 
     return response.data.data;
   },
+
+  // Toggle activate or deactivate bot subscription
+  async toggleBotSubscriptionStatus(
+    subscriptionId: string,
+    enable: boolean,
+  ): Promise<BotSubscriptionResponse> {
+    const endpoint = `/bot-sub/${subscriptionId}/status?active=${enable}`;
+    const response = await client.patch<BotSubscriptionResponse>(endpoint);
+    return response.data;
+  },
 });
 
 export function useBotSubService() {

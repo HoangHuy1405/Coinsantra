@@ -135,10 +135,6 @@ export default function AiBotPage() {
         isOpen={!!copyingBotId} // Open if we have an ID
         botId={copyingBotId || ""} // Pass the ID to the form
         onClose={() => setCopyingBotId(null)} // Clear ID to close
-        onSuccess={() => {
-          console.log("Bot copied successfully! Refreshing data...");
-          // optional: router.refresh() or refetch data
-        }}
       />
     </main>
   );

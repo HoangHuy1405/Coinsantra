@@ -17,7 +17,7 @@ export interface BotSubscriptionDetail {
   botName: string;
   tradingPair: string;
   coin: string;
-  isActive: boolean;
+  active: boolean;
   netInvestment: number;
   totalEquity: number;
   pnl: number;

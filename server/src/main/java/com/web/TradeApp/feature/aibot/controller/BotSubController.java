@@ -82,7 +82,7 @@ public class BotSubController {
         // Build simple pagination response
         ResultPaginationResponse response = new ResultPaginationResponse();
         PageMeta meta = new PageMeta();
-        meta.setPage(pageable.getPageNumber() + 1); // Convert to 1-based
+        meta.setPage(pageable.getPageNumber());
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(subscriptions.getTotalPages());
         meta.setTotal(subscriptions.getTotalElements());
