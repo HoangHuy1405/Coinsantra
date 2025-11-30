@@ -117,7 +117,7 @@ public class BotServiceImpl implements BotService {
 
     @Override
     public BotResponse.BotStats calculateStats(Bot bot) {
-        Long subscriberCount = botSubscriptionRepository.countActiveSubscribers(bot.getId());
+        Long subscriberCount = botSubscriptionRepository.countByBotIdAndActiveTrue(bot.getId());
 
         // Mocking trade count/ROI for now as per previous context
         // You can replace these with actual Repository calls

@@ -10,6 +10,7 @@ import org.mapstruct.ReportingPolicy;
 
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotCopyRequest;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotSubscriptionResponse;
+import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotUpdateRequest;
 import com.web.TradeApp.feature.aibot.model.BotSubscription;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE, builder = @Builder(disableBuilder = true))
@@ -25,7 +26,7 @@ public interface BotSubMapper {
     @Mapping(target = "totalProfit", expression = "java(BigDecimal.ZERO)") // Default 0 for new copies
     BotSubscriptionResponse toResponse(BotSubscription entity);
 
-    void updateEntityFromDto(BotCopyRequest request, @MappingTarget BotSubscription entity);
+    void updateEntityFromDto(BotUpdateRequest request, @MappingTarget BotSubscription entity);
 
     @Named("mapStatus")
     default String mapStatus(boolean active) {

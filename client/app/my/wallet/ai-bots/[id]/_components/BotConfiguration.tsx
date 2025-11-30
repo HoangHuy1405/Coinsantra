@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import toast from "react-hot-toast";
-import { DialogTitle } from "@radix-ui/react-dialog";
-
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/shadcn/card";
+import { Button } from "@/app/ui/shadcn/button";
 import {
   Form,
   FormControl,
@@ -16,90 +15,73 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/ui/shadcn/form";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-} from "@/app/ui/shadcn/dialog";
 import { Input } from "@/app/ui/shadcn/input";
-import { Button } from "@/app/ui/shadcn/button";
-
-import { botConfigSchema, type BotConfigFormValues } from "./botConfigSchema";
+import {
+  BotSubUpdateSchema,
+  BotSubUpdateInputs,
+} from "@/services/schemas/botSub";
 import { useBotSub } from "@/hooks/bot/useBotSub";
-import { BotCopyRequest } from "@/services/botSubService";
+import { BotCopyRequest, BotUpdateRequest } from "@/services/botSubService";
 
-interface BotConfigDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  botId: string;
+interface BotConfigurationProps {
+  subscriptionId: string;
+  botWalletCoin: number;
+  botWalletBalance: number;
+  tradePercentage: number;
+  maxDailyLossPercentage: number;
 }
 
-export function BotConfigDialog({
-  isOpen,
-  onClose,
-  botId,
-}: BotConfigDialogProps) {
-  const { createMutation, isPending } = useBotSub();
+export default function BotConfiguration({
+  subscriptionId,
+  botWalletCoin,
+  botWalletBalance,
+  tradePercentage,
+  maxDailyLossPercentage,
+}: BotConfigurationProps) {
+  const { updateMutation, isPending } = useBotSub();
 
-  const form = useForm({
-    resolver: zodResolver(botConfigSchema),
+  const form = useForm<BotSubUpdateInputs>({
+    resolver: zodResolver(BotSubUpdateSchema),
     mode: "onChange",
     defaultValues: {
-      botId: botId,
-      allocatedAmount: 0,
-      allocatedCoin: 0,
-      tradePercentage: 10,
-      maxDailyLossPercentage: 5,
+      botWalletCoin,
+      botWalletBalance,
+      tradePercentage,
+      maxDailyLossPercentage,
     },
   });
 
-  // Reset form when dialog opens
-  useEffect(() => {
-    if (isOpen) {
-      form.reset({
-        botId: botId,
-        allocatedAmount: 0,
-        allocatedCoin: 0,
-        tradePercentage: 10,
-        maxDailyLossPercentage: 5,
-      });
-    }
-  }, [isOpen, botId, form]);
-
-  const onSubmit = (values: BotConfigFormValues) => {
-    // Transform UI percentages (1-100) to API decimals (0.01-1.0)
-    const payload: BotCopyRequest = {
-      botId: values.botId,
-      botWalletBalance: values.allocatedAmount,
-      botWalletCoin: values.allocatedCoin,
-      tradePercentage: values.tradePercentage / 100,
-      maxDailyLossPercentage: values.maxDailyLossPercentage / 100,
+  const onSubmit = (values: BotSubUpdateInputs) => {
+    const payload: BotUpdateRequest = {
+      botWalletBalance:
+        typeof values.botWalletBalance === "string"
+          ? parseFloat(values.botWalletBalance)
+          : values.botWalletBalance,
+      botWalletCoin:
+        typeof values.botWalletCoin === "string"
+          ? parseFloat(values.botWalletCoin)
+          : values.botWalletCoin,
+      tradePercentage:
+        (typeof values.tradePercentage === "string"
+          ? parseFloat(values.tradePercentage)
+          : values.tradePercentage) / 100,
+      maxDailyLossPercentage:
+        (typeof values.maxDailyLossPercentage === "string"
+          ? parseFloat(values.maxDailyLossPercentage)
+          : values.maxDailyLossPercentage) / 100,
     };
-
-    createMutation.mutate(payload, {
-      onSuccess: () => {
-        onClose();
-      },
-    });
+    updateMutation.mutate({ id: subscriptionId, payload });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className="sm:max-w-[500px] bg-card text-card-foreground border-border"
-      >
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-foreground">
-            Copy Bot Strategy
-          </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Configure parameters to start copying this trading bot.
-          </DialogDescription>
-        </DialogHeader>
-
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">Bot Configuration</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Adjust risk and trading parameters
+        </p>
+      </CardHeader>
+      <CardContent className="space-y-6">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -108,7 +90,7 @@ export function BotConfigDialog({
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="allocatedAmount"
+                name="botWalletBalance"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Allocated Capital ($)</FormLabel>
@@ -121,6 +103,9 @@ export function BotConfigDialog({
                           focus-visible:ring-ring"
                         {...field}
                         value={field.value as string | number}
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value) || 0)
+                        }
                       />
                     </FormControl>
                     <FormMessage className="text-destructive font-medium" />
@@ -130,7 +115,7 @@ export function BotConfigDialog({
 
               <FormField
                 control={form.control}
-                name="allocatedCoin"
+                name="botWalletCoin"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Allocated Coin</FormLabel>
@@ -143,6 +128,9 @@ export function BotConfigDialog({
                           focus-visible:ring-ring"
                         {...field}
                         value={field.value as string | number}
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value) || 0)
+                        }
                       />
                     </FormControl>
                     <FormMessage className="text-destructive font-medium" />
@@ -167,6 +155,9 @@ export function BotConfigDialog({
                           className="pr-8 bg-input border-input"
                           {...field}
                           value={field.value as string | number}
+                          onChange={(e) =>
+                            field.onChange(parseFloat(e.target.value) || 0)
+                          }
                         />
                         <span
                           className="absolute right-3 top-2 text-sm
@@ -199,6 +190,9 @@ export function BotConfigDialog({
                           className="pr-8 bg-input border-input"
                           {...field}
                           value={field.value as string | number}
+                          onChange={(e) =>
+                            field.onChange(parseFloat(e.target.value) || 0)
+                          }
                         />
                         <span
                           className="absolute right-3 top-2 text-sm
@@ -217,29 +211,20 @@ export function BotConfigDialog({
               />
             </div>
 
-            <DialogFooter className="pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                className="border-border text-foreground hover:bg-muted"
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
+            <div className="pt-2">
               <Button
                 type="submit"
                 disabled={isPending}
-                className="bg-primary text-primary-foreground
+                className="w-full bg-primary text-primary-foreground
                   hover:bg-primary/90"
               >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Start Copying
+                Save Changes
               </Button>
-            </DialogFooter>
+            </div>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   );
 }

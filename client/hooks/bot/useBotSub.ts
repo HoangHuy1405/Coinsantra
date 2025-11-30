@@ -1,13 +1,12 @@
-import { useBotSubService, BotCopyRequest } from "@/services/botSubService";
+import {
+  useBotSubService,
+  BotCopyRequest,
+  BotUpdateRequest,
+} from "@/services/botSubService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-interface UseBotMutationsProps {
-  onSuccess?: () => void;
-  onClose?: () => void;
-}
-
-export function useBotSub({ onSuccess, onClose }: UseBotMutationsProps = {}) {
+export function useBotSub() {
   const botSubService = useBotSubService();
   const queryClient = useQueryClient();
 
@@ -17,8 +16,6 @@ export function useBotSub({ onSuccess, onClose }: UseBotMutationsProps = {}) {
     onSuccess: () => {
       toast.success("Bot copied successfully");
       queryClient.invalidateQueries({ queryKey: ["bot-subscriptions"] });
-      onSuccess?.();
-      onClose?.();
     },
     onError: (error: any) => {
       console.error("Create Bot Error:", error);
@@ -32,13 +29,12 @@ export function useBotSub({ onSuccess, onClose }: UseBotMutationsProps = {}) {
 
   // Mutation for updating an existing subscription
   const updateMutation = useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: BotCopyRequest }) =>
+    mutationFn: ({ id, payload }: { id: string; payload: BotUpdateRequest }) =>
       botSubService.updateBotSub(id, payload),
     onSuccess: () => {
       toast.success("Configuration updated successfully");
       queryClient.invalidateQueries({ queryKey: ["bot-subscriptions"] });
-      onSuccess?.();
-      onClose?.();
+      queryClient.invalidateQueries({ queryKey: ["subscription-detail"] });
     },
     onError: (error: any) => {
       console.error("Update Bot Error:", error);

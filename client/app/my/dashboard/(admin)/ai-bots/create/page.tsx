@@ -13,7 +13,7 @@ import { EngineSettingsSection } from "./_components/EngineSettingsSection";
 import { TradingConfigurationSection } from "./_components/TradingConfigurationSection";
 import { useCreateBot } from "@/hooks/bot/useCreateBot";
 import { BotSecretsDialog } from "./_components/BotSecretsDialog";
-import { BotSecretResponse } from "@/services/botService";
+import { BotSecretResponse } from "@/services/interfaces/botInterfaces";
 
 export default function AdminBotCreatePage() {
   const router = useRouter();

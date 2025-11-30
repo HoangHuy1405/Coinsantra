@@ -15,12 +15,12 @@ import {
   useBotForEdit,
   useDeleteBot,
 } from "@/hooks/bot/useBotHook";
-import { BotResponse } from "@/services/botService";
 import { BotFormInputs, BotFormSchema } from "@/services/schemas/bot";
 import { EditQuickActions } from "./EditQuickActions";
 import { EditStatistics } from "./EditStatistics";
 import { useState } from "react";
 import { DeleteBotModal } from "../../../overview/_components/DeleteBotModal";
+import { BotResponse } from "@/services/interfaces/botInterfaces";
 
 function BotEditForm({ bot, botId }: { bot: BotResponse; botId: string }) {
   const router = useRouter();

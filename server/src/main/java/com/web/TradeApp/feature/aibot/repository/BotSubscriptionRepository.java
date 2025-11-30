@@ -16,12 +16,7 @@ public interface BotSubscriptionRepository extends JpaRepository<BotSubscription
     /*
      * Count active subscribers to this bot
      */
-    @Query("""
-                SELECT COUNT(bs)
-                FROM BotSubscription bs
-                WHERE bs.bot.id = :botId AND bs.active = true
-            """)
-    long countActiveSubscribers(@Param("botId") UUID botId);
+    Long countByBotIdAndActiveTrue(UUID botId);
 
     /*
      * represents how much total money is currently allocated by users to that bot
@@ -32,6 +27,17 @@ public interface BotSubscriptionRepository extends JpaRepository<BotSubscription
                 WHERE bs.bot.id = :botId AND bs.active = true
             """)
     Double sumAllocatedCapital(@Param("botId") UUID botId);
+
+    /**
+     * Calculate total net investment of bot from all active subscriptions
+     * This sums the current netInvestment field from BotSubscription entities
+     */
+    @Query("""
+            SELECT COALESCE(SUM(bs.netInvestment), 0)
+            FROM BotSubscription bs
+            WHERE bs.bot.id = :botId AND bs.active = true
+            """)
+    java.math.BigDecimal calcBotTotalInvestment(@Param("botId") UUID botId);
 
     // Used in the fan-out phase (Signal Listener) to find who to execute trades for
     List<BotSubscription> findByBotIdAndActiveTrue(UUID botId);
@@ -46,4 +52,7 @@ public interface BotSubscriptionRepository extends JpaRepository<BotSubscription
 
     // Find all active subscriptions for a specific bot
     List<BotSubscription> findAllByBotIdAndActiveTrue(UUID botId);
+
+    // Find all subscriptions for a specific user
+    List<BotSubscription> findAllByUserId(UUID userId);
 }

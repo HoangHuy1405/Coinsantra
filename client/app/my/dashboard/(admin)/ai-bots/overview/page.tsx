@@ -9,7 +9,7 @@ import BotTable from "./_components/BotTable";
 import { BotFilterBar } from "./_components/BotFilterBar";
 import { BotAction, BotStatus } from "@/services/constants/botConstant";
 import { useAllBots } from "@/hooks/bot/useBotHook";
-import { BotResponse } from "@/services/botService";
+import { BotResponse } from "@/services/interfaces/botInterfaces";
 
 export default function AdminOverview() {
   const [statusFilter, setStatusFilter] = useState<BotStatus | "all">("all");

@@ -1,12 +1,25 @@
 import useAxiosAuth from "@/hooks/useAxiosAuth";
 import { AxiosInstance } from "axios";
+import { ApiResponse } from "@/services/constants/type";
+import {
+  BotSubscription,
+  BotSubscriptionDetail,
+  SubscriptionPaginatedResponse,
+  SubscriptionFilterParams,
+} from "./interfaces/botSubInterfaces";
 
 export type BotCopyRequest = {
   botId: string;
   botWalletBalance: number;
   botWalletCoin: number;
-  tradePercentage: number; // Sent as decimal (0.01 - 1.0)
-  maxDailyLossPercentage: number; // Sent as decimal (0.01 - 1.0)
+  tradePercentage: number;
+  maxDailyLossPercentage: number;
+};
+export type BotUpdateRequest = {
+  botWalletBalance: number;
+  botWalletCoin: number;
+  tradePercentage: number;
+  maxDailyLossPercentage: number;
 };
 
 export type BotSubscriptionResponse = {
@@ -30,13 +43,59 @@ export const BotSubService = (client: AxiosInstance) => ({
 
   async updateBotSub(
     botSubId: string,
-    payload: BotCopyRequest,
+    payload: BotUpdateRequest,
   ): Promise<BotSubscriptionResponse> {
     const res = await client.put<BotSubscriptionResponse>(
       `/bot-sub/${botSubId}`,
       payload,
     );
     return res.data;
+  },
+
+  /**
+   * Fetch all user subscriptions with pagination
+   */
+  async getAllSubscriptions(
+    params: SubscriptionFilterParams,
+  ): Promise<SubscriptionPaginatedResponse> {
+    const queryParams = new URLSearchParams();
+
+    // Pagination (0-indexed for backend)
+    queryParams.append("page", Math.max(0, params.page - 1).toString());
+    queryParams.append("size", params.size.toString());
+
+    // Sort by
+    if (params.sortBy) {
+      queryParams.append("sortBy", params.sortBy);
+    }
+
+    const response = await client.get<
+      ApiResponse<SubscriptionPaginatedResponse>
+    >(`/bot-sub?${queryParams.toString()}`);
+
+    if (!response.data.data) {
+      throw new Error("No data returned from server");
+    }
+
+    return response.data.data;
+  },
+
+  /**
+   * Fetch detailed subscription metrics
+   */
+  async getSubscriptionDetail(
+    subscriptionId: string,
+    timeframe: "current" | "1d" | "7d" = "current",
+  ): Promise<BotSubscriptionDetail> {
+    const response = await client.get<ApiResponse<BotSubscriptionDetail>>(
+      `/bot-sub/${subscriptionId}?timeframe=${timeframe}`,
+    );
+
+    if (!response.data.data) {
+      throw new Error("Subscription not found");
+    }
+
+    return response.data.data;
   },
 });
 

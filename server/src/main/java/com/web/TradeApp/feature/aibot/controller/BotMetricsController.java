@@ -16,7 +16,7 @@ import org.springframework.data.web.PageableDefault;
 
 import com.web.TradeApp.feature.aibot.dto.Bot.BotGridItemDTO;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.SubscriptionMetrics;
-import com.web.TradeApp.feature.aibot.service.subscription.ModularPnLService;
+import com.web.TradeApp.feature.aibot.service.subscription.ModularMetricsServiceImpl;
 import com.web.TradeApp.feature.common.Annotation.ApiMessage;
 import com.web.TradeApp.feature.common.response.ResultPaginationResponse;
 
@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BotMetricsController {
 
-    private final ModularPnLService pnlService;
+    private final ModularMetricsServiceImpl pnlService;
 
     /**
      * Get all bots metrics với pagination, search và sorting

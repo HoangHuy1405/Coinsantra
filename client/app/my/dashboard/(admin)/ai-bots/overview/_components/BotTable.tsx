@@ -20,9 +20,9 @@ import { BotStatus } from "@/services/constants/botConstant";
 
 // FIX: Ensure date-fns import is present
 import { format, isValid } from "date-fns";
-import { BotResponse } from "@/services/botService";
 import { DeleteBotModal } from "./DeleteBotModal";
 import { useDeleteBot } from "@/hooks/bot/useBotHook";
+import { BotResponse } from "@/services/interfaces/botInterfaces";
 
 interface BotTableProps {
   bots: BotResponse[];

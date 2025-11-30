@@ -13,6 +13,7 @@ import com.web.TradeApp.exception.IdInvalidException;
 import com.web.TradeApp.exception.InsufficientBalanceException;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotCopyRequest;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotSubscriptionResponse;
+import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotUpdateRequest;
 import com.web.TradeApp.feature.aibot.enums.BotAction;
 import com.web.TradeApp.feature.aibot.mapper.BotSubMapper;
 import com.web.TradeApp.feature.aibot.model.Bot;
@@ -139,7 +140,7 @@ public class BotSubscriptionServiceImpl implements BotSubscriptionService {
 
     @Override
     @Transactional
-    public BotSubscriptionResponse updateBotSub(UUID botSubId, UUID userId, BotCopyRequest request) {
+    public BotSubscriptionResponse updateBotSub(UUID botSubId, UUID userId, BotUpdateRequest request) {
         // 1. Fetch Existing Subscription
         BotSubscription sub = subRepo.findById(botSubId)
                 .orElseThrow(() -> new IdInvalidException("Subscription not found for ID: " + botSubId));
@@ -152,20 +153,12 @@ public class BotSubscriptionServiceImpl implements BotSubscriptionService {
         // 3. Validate Assets for the NEW allocation amounts
         // We re-run validation to ensure the user has enough funds for the updated
         // target
-        validateSufficientAsset(userId, request.botId(), request.botWalletBalance(), request.botWalletCoin());
-
-        // 4. Handle Bot Switch (if user changed the bot strategy)
-        Bot bot = sub.getBot();
-        if (!sub.getBot().getId().equals(request.botId())) {
-            bot = botRepo.findById(request.botId())
-                    .orElseThrow(() -> new IdInvalidException("New Bot ID not found: " + request.botId()));
-            sub.setBot(bot);
-        }
+        validateSufficientAsset(userId, sub.getBot().getId(), request.botWalletBalance(), request.botWalletCoin());
 
         // 5. Tính lại Net Investment khi update
         BigDecimal oldNetInvestment = sub.getNetInvestment();
         BigDecimal newNetInvestment = calculateNetInvestment(
-                bot.getCoinSymbol(),
+                sub.getBot().getCoinSymbol(),
                 request.botWalletBalance(),
                 request.botWalletCoin());
 
