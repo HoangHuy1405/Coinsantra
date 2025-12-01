@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useTransition } from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/app/ui/shadcn/tabs"
 import { Input } from "@/app/ui/shadcn/input"
 import { Button } from "@/app/ui/shadcn/button"
@@ -8,6 +8,8 @@ import { Slider } from "@/app/ui/shadcn/slider"
 import { Label } from "@/app/ui/shadcn/label"
 import { Checkbox } from "@/app/ui/shadcn/checkbox"
 import { cn } from "@/lib/utils"
+import { executeMarketOrder } from "@/lib/actions/trade.actions"
+import { toast } from "react-hot-toast"
 
 interface OrderInputSectionProps {
     side: "buy" | "sell";
@@ -33,16 +35,94 @@ const OrderInputSection = ({
     onToggleTPSL
 }: OrderInputSectionProps) => {
 
+    // STATE
     const [priceVal, setPriceVal] = useState<string>(orderType === "limit" ? currentPrice.toString() : "");
     const [amountVal, setAmountVal] = useState<string>("");
     const [percentage, setPercentage] = useState([0]);
 
+    // TP/SL
     const [tpVal, setTpVal] = useState("");
     const [slVal, setSlVal] = useState("");
+
+    // Loading State cho Server Action
+    const [isPending, startTransition] = useTransition();
 
     const isBuy = side === "buy";
     const btnColor = isBuy ? "bg-[#0ecb81] hover:bg-[#0ecb81]/90" : "bg-[#f6465d] hover:bg-[#f6465d]/90";
     const isMarket = orderType === "market";
+
+    // Reset form tab for Market/Limit
+    useEffect(() => {
+        setAmountVal("");
+        setPercentage([0]);
+        if (isMarket) {
+            setPriceVal("Market Price");
+        } else {
+            setPriceVal(currentPrice.toString());
+        }
+    }, [orderType, currentPrice, isMarket]);
+
+    // Logic Slider for Market Order ---
+    useEffect(() => {
+        if (percentage[0] === 0) return;
+
+        const percent = percentage[0] / 100;
+
+        const activePrice = isMarket ? currentPrice : (parseFloat(priceVal) || 0);
+
+        if (activePrice <= 0) return;
+
+        let calculatedAmount = 0;
+
+        if (side === "buy") {
+            // Buy: Amount Coin = (Balance USDT * %) / Giá
+
+            calculatedAmount = (balance * percent * 0.99) / activePrice;
+        } else {
+            // Sell: Amount Coin = Balance Coin * %
+            calculatedAmount = balance * percent;
+        }
+
+        // Round to 6 decimal places (or according to the coin's precision)
+        setAmountVal(calculatedAmount.toFixed(6));
+
+    }, [percentage, balance, side, isMarket, priceVal, currentPrice]);
+
+    // Handle placing order
+    const handleTrade = () => {
+        if (disabled) {
+            toast.error("Vui lòng đăng nhập để giao dịch");
+            return;
+        }
+
+        const amount = parseFloat(amountVal);
+        if (!amount || amount <= 0) {
+            toast.error("Vui lòng nhập số lượng hợp lệ");
+            return;
+        }
+
+        startTransition(async () => {
+            if (isMarket) {
+                const result = await executeMarketOrder({
+                    symbol: symbol,
+                    side: side,
+                    quantity: amount
+                });
+
+                if (result.success) {
+                    toast.success(result.message);
+                    // Reset form
+                    setAmountVal("");
+                    setPercentage([0]);
+                } else {
+                    toast.error(result.message);
+                }
+            } else {
+
+                toast("Tính năng Limit Order đang phát triển");
+            }
+        });
+    };
 
     return (
         <div className="flex flex-col gap-4 py-2">
@@ -55,18 +135,24 @@ const OrderInputSection = ({
                     <Input
                         className={cn(
                             "h-10 pl-12 text-right font-mono text-sm",
-                            isMarket && "opacity-50 bg-secondary/20 cursor-not-allowed",
+                            !isMarket && "pr-14",
+                            isMarket && "opacity-50 bg-secondary/20 cursor-not-allowed text-muted-foreground",
                             "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         )}
-                        placeholder={isMarket ? "Market Price" : currentPrice.toString()}
-                        value={isMarket ? "" : priceVal}
-                        onChange={(e) => setPriceVal(e.target.value)}
+                        placeholder="Market Price"
+                        value={isMarket ? "Market Price" : priceVal}
+                        onChange={(e) => !isMarket && setPriceVal(e.target.value)}
                         disabled={disabled || isMarket}
-                        type="number"
+                        readOnly={isMarket}
+                        type={isMarket ? "text" : "number"}
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
-                        {currency}
-                    </div>
+
+                    {/* Currency Label */}
+                    {!isMarket && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground pointer-events-none">
+                            {currency}
+                        </div>
+                    )}
                 </div>
 
                 <Button
@@ -89,7 +175,10 @@ const OrderInputSection = ({
                     placeholder="Amount"
                     value={amountVal}
                     disabled={disabled}
-                    onChange={(e) => setAmountVal(e.target.value)}
+                    onChange={(e) => {
+                        setAmountVal(e.target.value);
+                        setPercentage([0]); // Reset slider khi nhập tay
+                    }}
                     type="number"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
@@ -132,51 +221,18 @@ const OrderInputSection = ({
                 />
             </div>
 
-            {/* TP/SL TRIGGER CHECKBOX */}
+            {/* TP/SL SECTION (Giữ nguyên) */}
             <div className="flex items-center space-x-2 mt-1">
-                <Checkbox
-                    id={`tpsl-${side}`}
-                    checked={showTPSL}
-                    onCheckedChange={(checked) => onToggleTPSL(!!checked)}
-                />
+                <Checkbox id={`tpsl-${side}`} checked={showTPSL} onCheckedChange={(checked) => onToggleTPSL(!!checked)} />
                 <Label htmlFor={`tpsl-${side}`} className="text-xs font-medium text-muted-foreground cursor-pointer">TP/SL</Label>
             </div>
-
-            {/* TP/SL INPUT FIELDS */}
             {showTPSL && (
                 <div className="space-y-3 mt-2 animate-in slide-in-from-top-2 duration-200">
-                    {/* TAKE PROFIT */}
                     <div className="relative w-full group">
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground group-focus-within:text-foreground transition-colors z-10 whitespace-nowrap">
-                            Take Profit
-                        </div>
-                        <Input
-                            className="h-10 pr-15 text-right font-mono text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            placeholder="TP Limit"
-                            value={tpVal}
-                            onChange={(e) => setTpVal(e.target.value)}
-                            type="number"
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
-                            {currency}
-                        </div>
+                        <Input className="h-10 pr-15 text-right font-mono text-sm" placeholder="TP Limit" value={tpVal} onChange={(e) => setTpVal(e.target.value)} type="number" />
                     </div>
-
-                    {/* STOP LOSS */}
                     <div className="relative w-full group">
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground group-focus-within:text-foreground transition-colors z-10 whitespace-nowrap">
-                            Stop Loss
-                        </div>
-                        <Input
-                            className="h-10 pr-15 text-right font-mono text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            placeholder="SL Limit"
-                            value={slVal}
-                            onChange={(e) => setSlVal(e.target.value)}
-                            type="number"
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
-                            {currency}
-                        </div>
+                        <Input className="h-10 pr-15 text-right font-mono text-sm" placeholder="SL Limit" value={slVal} onChange={(e) => setSlVal(e.target.value)} type="number" />
                     </div>
                 </div>
             )}
@@ -185,18 +241,19 @@ const OrderInputSection = ({
             <div className="flex flex-col gap-1 text-xs text-muted-foreground px-3">
                 <div className="flex justify-between">
                     <span>Avbl</span>
+                    {/* Format số dư cho đẹp */}
                     <span className="font-mono text-foreground">{balance.toLocaleString()} {isBuy ? currency : symbol}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span className="underline decoration-dotted decoration-muted-foreground/50">Max {isBuy ? 'Buy' : 'Sell'}</span>
-                    <span className="font-mono text-foreground">-- {isBuy ? symbol : currency}</span>
                 </div>
             </div>
 
             {/* ACTION BUTTON */}
             {!disabled ? (
-                <Button className={cn("w-full font-bold text-base h-10 mt-2 text-white transition-all hover:brightness-110", btnColor)}>
-                    {isBuy ? "Buy" : "Sell"} {symbol}
+                <Button
+                    onClick={handleTrade}
+                    disabled={isPending} // Disable nút khi đang loading
+                    className={cn("w-full font-bold text-base h-10 mt-2 text-white transition-all hover:brightness-110", btnColor)}
+                >
+                    {isPending ? "Processing..." : `${isBuy ? "Buy" : "Sell"} ${symbol}`}
                 </Button>
             ) : (
                 <Button className={cn("w-full font-bold text-base h-10 mt-2 text-white transition-all hover:brightness-110", btnColor)}>
@@ -207,6 +264,7 @@ const OrderInputSection = ({
     );
 };
 
+// --- MAIN COMPONENT ---
 interface SpotOrderFormProps {
     symbol: string;
     currency: string;
@@ -217,19 +275,16 @@ interface SpotOrderFormProps {
 export default function SpotOrderForm({ symbol = "ZEC", currency = "USDT", price = 601.86, isLoggedIn }: SpotOrderFormProps) {
     const [activeTab, setActiveTab] = useState<string>("buy");
     const [orderType, setOrderType] = useState<"limit" | "market">("limit");
-
     const [showTPSL, setShowTPSL] = useState(false);
+
+    // TODO: Balance này đang HARDCODE. Bạn cần fetch thực tế từ API Wallet
+    const fakeBalanceUSDT = 1250.00;
+    const fakeBalanceCoin = 0.45;
 
     return (
         <div className="flex flex-col h-full w-full bg-background text-foreground px-4">
-
-            <Tabs
-                value={orderType}
-                onValueChange={(val) => setOrderType(val as "limit" | "market")}
-                className="w-full mb-4"
-                variant="underline"
-            >
-                <TabsList className=" border-b-0 gap-6">
+            <Tabs value={orderType} onValueChange={(val) => setOrderType(val as "limit" | "market")} className="w-full mb-4" variant="underline">
+                <TabsList className="border-b-0 gap-6">
                     <TabsTrigger value="limit" className="px-0 py-2 font-bold text-muted-foreground">Limit</TabsTrigger>
                     <TabsTrigger value="market" className="px-0 py-2 font-bold text-muted-foreground">Market</TabsTrigger>
                 </TabsList>
@@ -242,49 +297,24 @@ export default function SpotOrderForm({ symbol = "ZEC", currency = "USDT", price
                         <TabsTrigger value="buy" className="data-[state=active]:bg-[#0ecb81] data-[state=active]:text-white bg-secondary/30 h-full rounded-sm -skew-x-12"><span className="skew-x-12 font-bold text-xs uppercase">Buy</span></TabsTrigger>
                         <TabsTrigger value="sell" className="data-[state=active]:bg-[#f6465d] data-[state=active]:text-white bg-secondary/30 h-full rounded-sm -skew-x-12"><span className="skew-x-12 font-bold text-xs uppercase">Sell</span></TabsTrigger>
                     </TabsList>
-
                     <TabsContent value="buy" className="mt-0 h-full">
-                        <OrderInputSection
-                            side="buy" orderType={orderType} currency={currency} symbol={symbol} balance={1250.00} currentPrice={price} disabled={!isLoggedIn}
-                            showTPSL={showTPSL}
-                            onToggleTPSL={setShowTPSL}
-                        />
+                        <OrderInputSection side="buy" orderType={orderType} currency={currency} symbol={symbol} balance={fakeBalanceUSDT} currentPrice={price} disabled={!isLoggedIn} showTPSL={showTPSL} onToggleTPSL={setShowTPSL} />
                     </TabsContent>
                     <TabsContent value="sell" className="mt-0 h-full">
-                        <OrderInputSection
-                            side="sell" orderType={orderType} currency={currency} symbol={symbol} balance={0.45} currentPrice={price} disabled={!isLoggedIn}
-                            showTPSL={showTPSL}
-                            onToggleTPSL={setShowTPSL}
-                        />
+                        <OrderInputSection side="sell" orderType={orderType} currency={currency} symbol={symbol} balance={fakeBalanceCoin} currentPrice={price} disabled={!isLoggedIn} showTPSL={showTPSL} onToggleTPSL={setShowTPSL} />
                     </TabsContent>
                 </Tabs>
             </div>
 
-
-            {/* WIDE SCREEN: PARALLEL */}
+            {/* WIDE SCREEN */}
             <div className="hidden xl:grid xl:grid-cols-2 gap-6 h-full">
                 <div className="flex flex-col">
-                    <div className="mb-2 text-sm font-bold text-[#0ecb81] hidden">Buy {symbol}</div>
-                    {/* BUY COL */}
-                    <OrderInputSection
-                        side="buy" orderType={orderType} currency={currency} symbol={symbol} balance={1250.00} currentPrice={price} disabled={!isLoggedIn}
-                        showTPSL={showTPSL}
-                        onToggleTPSL={setShowTPSL}
-                    />
+                    <OrderInputSection side="buy" orderType={orderType} currency={currency} symbol={symbol} balance={fakeBalanceUSDT} currentPrice={price} disabled={!isLoggedIn} showTPSL={showTPSL} onToggleTPSL={setShowTPSL} />
                 </div>
-
                 <div className="flex flex-col">
-                    <div className="mb-2 text-sm font-bold text-[#f6465d] hidden">Sell {symbol}</div>
-                    {/* SELL COL */}
-                    <OrderInputSection
-                        side="sell" orderType={orderType} currency={currency} symbol={symbol} balance={0.45} currentPrice={price} disabled={!isLoggedIn}
-                        showTPSL={showTPSL}
-                        onToggleTPSL={setShowTPSL}
-                    />
+                    <OrderInputSection side="sell" orderType={orderType} currency={currency} symbol={symbol} balance={fakeBalanceCoin} currentPrice={price} disabled={!isLoggedIn} showTPSL={showTPSL} onToggleTPSL={setShowTPSL} />
                 </div>
-
             </div>
-
         </div>
     )
 }
