@@ -23,15 +23,23 @@ jobs:
         with:
           java-version: '21'
           distribution: 'microsoft'
+          cache: 'gradle'
 
-      - name: Build with Maven
-        run: mvn clean install
+      # FIX 1: Grant permission to the Gradle Wrapper script
+      - name: Grant execute permission for gradlew
+        run: chmod +x backend/gradlew
 
+      # FIX 2: Run Gradle Build inside the 'backend' folder (skipping tests for speed)
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+        working-directory: ./backend
+
+      # FIX 3: Upload the JAR from Gradle's specific output folder
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: backend/build/libs/*.jar
 
   deploy:
     runs-on: ubuntu-latest
