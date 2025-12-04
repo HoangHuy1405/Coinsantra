@@ -60,6 +60,11 @@ bot:
     key: ${BOT_API_KEY:}
     secret: ${BOT_API_SECRET:}
 
+snapshot:
+  interval: ${SNAPSHOT_INTERVAL:300000} # Snapshot capture interval in milliseconds (default: 5 minutes)
+  batch-size: ${SNAPSHOT_BATCH_SIZE:100} # Number of subscriptions to process per batch
+  transaction-timeout: ${SNAPSHOT_TRANSACTION_TIMEOUT:30} # Transaction timeout in seconds
+
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"

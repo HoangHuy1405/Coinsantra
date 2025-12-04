@@ -50,16 +50,17 @@ export default function PerformanceDashboard({
           <MetricBox
             label="Net PnL"
             value={`${pnl >= 0 ? "+" : ""}$${Math.abs(pnl).toFixed(2)}`}
-            positive={pnl >= 0}
+            showTrend={true}
           />
           <MetricBox
             label="ROI"
             value={`${roi >= 0 ? "+" : ""}${roi.toFixed(2)}%`}
-            positive={roi >= 0}
+            showTrend={true}
           />
           <MetricBox
             label="Max Drawdown"
             value={`-$${Math.abs(maxDrawdown).toFixed(2)} (${maxDrawdownPercent.toFixed(2)}%)`}
+            showTrend={false}
           />
         </div>
 

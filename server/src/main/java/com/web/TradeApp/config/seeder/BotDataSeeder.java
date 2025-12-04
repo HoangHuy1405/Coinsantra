@@ -1,4 +1,4 @@
-package com.web.TradeApp.config;
+package com.web.TradeApp.config.seeder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.web.TradeApp.feature.aibot.enums.BotCategory;
@@ -45,11 +46,9 @@ public class BotDataSeeder {
 
     private static final String BOT_NAME = "BTC Trading Bot Alpha";
     private static final BigDecimal BOT_FEE = new BigDecimal("0.01");
-    private static final BigDecimal INITIAL_WALLET_BALANCE = new BigDecimal("1000");
-    private static final BigDecimal INITIAL_WALLET_COIN = new BigDecimal("2");
-    private static final BigDecimal TRADE_PERCENTAGE = new BigDecimal("0.05"); // 5%
 
     @Bean
+    @Order(2)
     public CommandLineRunner seedBotData() {
         return args -> {
             log.info("Starting Bot Data Seeding...");
@@ -82,8 +81,8 @@ public class BotDataSeeder {
                         });
 
                 // --- 2. SEED BOT SUBSCRIPTIONS ---
-                seedBotSubscription(bot, "user1");
-                seedBotSubscription(bot, "user2");
+                seedBotSubscription(bot, "user1", new BigDecimal(1000), new BigDecimal(0.5), new BigDecimal(.01));
+                seedBotSubscription(bot, "user2", new BigDecimal(2000), new BigDecimal(1), new BigDecimal(.02));
 
                 return null;
             });
@@ -92,7 +91,8 @@ public class BotDataSeeder {
         };
     }
 
-    private void seedBotSubscription(Bot bot, String username) {
+    private void seedBotSubscription(Bot bot, String username, BigDecimal initialBalance,
+            BigDecimal initialCoinAmount, BigDecimal tradePercentage) {
         Optional<User> userOpt = userRepository.findByUsername(username);
         if (userOpt.isEmpty()) {
             log.warn("User {} not found, skipping bot subscription", username);
@@ -111,17 +111,18 @@ public class BotDataSeeder {
             // For seeding, we'll use a simplified approach assuming initial investment
             // equals
             // the total value
-            BigDecimal netInvestment = INITIAL_WALLET_BALANCE
-                    .add(INITIAL_WALLET_COIN.multiply(new BigDecimal("60000"))); // Assuming BTC price = 60000 for
-                                                                                 // initial calculation
+            BigDecimal netInvestment = initialBalance
+                    .add(initialCoinAmount.multiply(new BigDecimal("60000"))); // Assuming BTC price = 60000 for
+                                                                               // initial calculation (doesnt matter
+                                                                               // that much)
 
             BotSubscription subscription = BotSubscription.builder()
                     .bot(bot)
                     .userId(userId)
-                    .botWalletBalance(INITIAL_WALLET_BALANCE)
-                    .botWalletCoin(INITIAL_WALLET_COIN)
+                    .botWalletBalance(initialBalance)
+                    .botWalletCoin(initialCoinAmount)
                     .netInvestment(netInvestment)
-                    .tradePercentage(TRADE_PERCENTAGE)
+                    .tradePercentage(tradePercentage)
                     .active(true)
                     .startedAt(Instant.now())
                     .maxDailyLossPercentage(10.0) // Optional: 10% max daily loss

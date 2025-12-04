@@ -191,28 +191,27 @@ export default function BotDetailsContent({ botId }: BotDetailsContentProps) {
           <MetricBox
             label={`PnL (${timeframe === "1d" ? "24H" : "7D"})`}
             value={`${bot.totalPnl >= 0 ? "+" : ""}$${bot.totalPnl.toFixed(2)}`}
-            positive={bot.totalPnl >= 0}
+            showTrend={true}
           />
           <MetricBox
             label={`ROI (${timeframe === "1d" ? "24H" : "7D"})`}
             value={`${bot.averageRoi >= 0 ? "+" : ""}${bot.averageRoi.toFixed(2)}%`}
-            positive={bot.averageRoi >= 0}
+            showTrend={true}
           />
           <MetricBox
             label="Max Drawdown"
             value={`${bot.maxDrawdownPercent.toFixed(2)}%`}
+            showTrend={false}
           />
-          {/* <MetricBox
-            label="Active Users"
-            value={bot.activeSubscribers.toString()}
-          /> */}
           <MetricBox
             label="Total Net Investment"
             value={`$${bot.totalNetInvestment.toFixed(2)}`}
+            showTrend={false}
           />
           <MetricBox
             label="Total Equity"
             value={`$${bot.totalEquity.toFixed(2)}`}
+            showTrend={false}
           />
         </div>
       </Card>

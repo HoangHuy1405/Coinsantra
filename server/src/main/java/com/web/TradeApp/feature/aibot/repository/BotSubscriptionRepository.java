@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -47,8 +48,26 @@ public interface BotSubscriptionRepository extends JpaRepository<BotSubscription
 
     boolean existsByUserIdAndBotId(UUID userId, UUID botId);
 
-    // Find all active subscriptions
-    List<BotSubscription> findAllByActiveTrue();
+    /**
+     * Efficient Keyset Pagination.
+     * Instead of OFFSET (which gets slow), we ask for IDs greater than the last one
+     * we saw. -> using to process a batch of large subscriptions without loading
+     * all
+     */
+    List<BotSubscription> findByIdGreaterThanAndActiveTrueOrderByIdAsc(UUID id, Pageable pageable);
+
+    /**
+     * Same as above but with EAGER fetch of Bot to avoid
+     * LazyInitializationException
+     * when accessing bot properties outside transaction
+     */
+    @Query("""
+            SELECT bs FROM BotSubscription bs
+            JOIN FETCH bs.bot
+            WHERE bs.id > :id AND bs.active = true
+            ORDER BY bs.id ASC
+            """)
+    List<BotSubscription> findByIdGreaterThanAndActiveTrueWithBotOrderByIdAsc(@Param("id") UUID id, Pageable pageable);
 
     // Find all active subscriptions for a specific bot
     List<BotSubscription> findAllByBotIdAndActiveTrue(UUID botId);

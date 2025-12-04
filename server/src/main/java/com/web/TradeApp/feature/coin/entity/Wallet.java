@@ -38,6 +38,9 @@ public class Wallet extends BaseEntity {
     @Column(nullable = false, precision = 19, scale = 8)
     private BigDecimal balance; // in USD
 
+    @Column(nullable = false, precision = 19, scale = 8)
+    private BigDecimal netInvestment; // in USD
+
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<CoinHolding> coinHoldings = new ArrayList<>();

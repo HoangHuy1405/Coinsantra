@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.web.TradeApp.config.DataSeeder;
+import com.web.TradeApp.config.seeder.DataSeeder;
 import com.web.TradeApp.feature.coin.entity.Wallet;
 import com.web.TradeApp.feature.coin.repository.WalletRepository;
 
