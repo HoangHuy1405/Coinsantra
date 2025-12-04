@@ -31,12 +31,8 @@ jobs:
 
       # FIX 2: Run Gradle Build inside the 'server' folder (skipping tests for speed)
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew clean build -x test -x jar
         working-directory: ./server
-
-      # CRITICAL FIX: Delete the 'plain' jar so Azure only sees the correct one
-      - name: Remove plain JAR
-        run: rm backend/build/libs/*-plain.jar
 
       # FIX 3: Upload the JAR from Gradle's specific output folder
       - name: Upload artifact for deployment job
@@ -73,5 +69,6 @@ jobs:
           slot-name: 'Production'
           package: '*.jar'
           
+
 
 
