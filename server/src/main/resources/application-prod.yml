@@ -10,5 +10,5 @@ spring:
     # database-platform: org.hibernate.dialect.SQLServer2019Dialect
     hibernate:
       # Use 'validate' or 'none' in production to prevent data loss
-      ddl-auto: validate
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:validate}
     show-sql: false
