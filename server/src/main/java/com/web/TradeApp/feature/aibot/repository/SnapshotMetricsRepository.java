@@ -218,14 +218,26 @@ public interface SnapshotMetricsRepository extends JpaRepository<SubscriptionSna
    * Returns List of Object[] where [0] = Instant recordedAt, [1] = BigDecimal
    * totalPnl
    */
+  // @Query("""
+  // SELECT ss.recordedAt, SUM(ss.pnl)
+  // FROM SubscriptionSnapshot ss
+  // WHERE ss.botSubscription.bot.id = :botId
+  // AND ss.botSubscription.active = true
+  // AND ss.recordedAt >= :fromTime
+  // GROUP BY ss.recordedAt // wrong because it requires exact timestamp match to
+  // aggregate properly
+  // ORDER BY ss.recordedAt ASC
+  // """)
   @Query("""
-      SELECT ss.recordedAt, SUM(ss.pnl)
-      FROM SubscriptionSnapshot ss
-      WHERE ss.botSubscription.bot.id = :botId
-        AND ss.botSubscription.active = true
-        AND ss.recordedAt >= :fromTime
-      GROUP BY ss.recordedAt
-      ORDER BY ss.recordedAt ASC
+          SELECT
+            FUNCTION('DATE_FORMAT', ss.recordedAt, '%Y-%m-%d %H:%i:00'),
+            SUM(ss.pnl)
+          FROM SubscriptionSnapshot ss
+          WHERE ss.botSubscription.bot.id = :botId
+            AND ss.botSubscription.active = true
+            AND ss.recordedAt >= :fromTime
+          GROUP BY FUNCTION('DATE_FORMAT', ss.recordedAt, '%Y-%m-%d %H:%i:00')
+          ORDER BY FUNCTION('DATE_FORMAT', ss.recordedAt, '%Y-%m-%d %H:%i:00') ASC
       """)
   List<Object[]> getBotChartData(@Param("botId") UUID botId, @Param("fromTime") Instant fromTime);
 
@@ -240,5 +252,6 @@ public interface SnapshotMetricsRepository extends JpaRepository<SubscriptionSna
         AND ss.recordedAt >= :fromTime
       ORDER BY ss.recordedAt ASC
       """)
-  List<Object[]> getSubscriptionChartData(@Param("subscriptionId") UUID subscriptionId, @Param("fromTime") Instant fromTime);
+  List<Object[]> getSubscriptionChartData(@Param("subscriptionId") UUID subscriptionId,
+      @Param("fromTime") Instant fromTime);
 }
