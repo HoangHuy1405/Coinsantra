@@ -294,20 +294,30 @@ public class ModularMetricsServiceImpl implements ModularMetricsService {
         BigDecimal totalNetInvestment = subscriptionRepo.calcBotTotalInvestment(botId);
         BigDecimal totalEquity = metricsRepo.calcBotTotalEquity(botId);
 
-        // 2. Lấy chart data
+        // 2. Get chart data and aggregate by second to eliminate flickering
         List<Object[]> rawChartData = metricsRepo.getBotChartData(botId, compareTime);
-        List<com.web.TradeApp.feature.aibot.dto.Bot.ChartDataPoint> chartData = rawChartData.stream()
-                .map(row -> {
-                    // Handle different timestamp types from database
-                    Instant timestamp = row[0] instanceof java.sql.Timestamp
-                            ? ((java.sql.Timestamp) row[0]).toInstant()
-                            : (Instant) row[0];
 
-                    return com.web.TradeApp.feature.aibot.dto.Bot.ChartDataPoint.builder()
-                            .timestamp(timestamp)
-                            .totalPnl((BigDecimal) row[1])
-                            .build();
-                })
+        // Group by timestamp truncated to seconds (eliminate microsecond differences)
+        java.util.Map<Long, BigDecimal> aggregatedData = new java.util.LinkedHashMap<>();
+        for (Object[] row : rawChartData) {
+            Instant timestamp = row[0] instanceof java.sql.Timestamp
+                    ? ((java.sql.Timestamp) row[0]).toInstant()
+                    : (Instant) row[0];
+            BigDecimal pnl = (BigDecimal) row[1];
+
+            // Truncate to seconds (remove milliseconds/microseconds)
+            long secondsEpoch = timestamp.getEpochSecond();
+
+            // Aggregate PnL for same second
+            aggregatedData.merge(secondsEpoch, pnl, BigDecimal::add);
+        }
+
+        // Convert back to ChartDataPoint list
+        List<com.web.TradeApp.feature.aibot.dto.Bot.ChartDataPoint> chartData = aggregatedData.entrySet().stream()
+                .map(entry -> com.web.TradeApp.feature.aibot.dto.Bot.ChartDataPoint.builder()
+                        .timestamp(Instant.ofEpochSecond(entry.getKey()))
+                        .totalPnl(entry.getValue())
+                        .build())
                 .collect(Collectors.toList());
 
         return BotDetailDTO.builder()
