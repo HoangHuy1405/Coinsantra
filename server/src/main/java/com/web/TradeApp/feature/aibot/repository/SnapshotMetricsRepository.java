@@ -214,11 +214,9 @@ public interface SnapshotMetricsRepository extends JpaRepository<SubscriptionSna
 
   /**
    * 14. Get chart data (PnL over time) for bot by timeframe
-   * Aggregates all active subscriptions' PnL at each snapshot time
-   * Returns List of Object[] where [0] = Instant recordedAt, [1] = BigDecimal totalPnl
-   * 
-   * NOTE: With batch timestamps, all snapshots in the same batch have identical recordedAt,
-   * so GROUP BY will naturally aggregate them together (no flickering)
+   * Returns all snapshots - aggregation handled in service layer
+   * Returns List of Object[] where [0] = Instant recordedAt, [1] = BigDecimal
+   * totalPnl
    */
   @Query("""
       SELECT ss.recordedAt, SUM(ss.pnl)
