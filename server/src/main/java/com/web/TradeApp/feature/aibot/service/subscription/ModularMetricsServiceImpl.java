@@ -299,19 +299,9 @@ public class ModularMetricsServiceImpl implements ModularMetricsService {
         List<com.web.TradeApp.feature.aibot.dto.Bot.ChartDataPoint> chartData = rawChartData.stream()
                 .map(row -> {
                     // Handle different timestamp types from database
-                    Instant timestamp;
-                    if (row[0] instanceof String) {
-                        // repository query DATE_FORMAT returns String - parse it back to Instant
-                        String dateStr = (String) row[0];
-                        timestamp = java.time.LocalDateTime
-                                .parse(dateStr, java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                                .atZone(java.time.ZoneId.systemDefault())
-                                .toInstant();
-                    } else if (row[0] instanceof java.sql.Timestamp) {
-                        timestamp = ((java.sql.Timestamp) row[0]).toInstant();
-                    } else {
-                        timestamp = (Instant) row[0];
-                    }
+                    Instant timestamp = row[0] instanceof java.sql.Timestamp
+                            ? ((java.sql.Timestamp) row[0]).toInstant()
+                            : (Instant) row[0];
 
                     return com.web.TradeApp.feature.aibot.dto.Bot.ChartDataPoint.builder()
                             .timestamp(timestamp)

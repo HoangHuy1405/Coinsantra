@@ -106,6 +106,10 @@ public class SubSnapshotServiceImpl implements SubSnapshotService {
     private int processAndSaveBatch(List<BotSubscription> subs) {
         List<SubscriptionSnapshot> snapshots = new ArrayList<>();
 
+        // ✅ Use single timestamp for entire batch to prevent flickering
+        // All snapshots in this batch will have identical recordedAt
+        Instant batchTimestamp = Instant.now();
+
         // OPTIMIZATION: Collect all unique coin symbols from all subscriptions FIRST
         Set<String> allCoinSymbols = subs.stream()
                 .map(sub -> sub.getBot().getCoinSymbol())
@@ -125,8 +129,8 @@ public class SubSnapshotServiceImpl implements SubSnapshotService {
         // Now process each subscription using the pre-fetched prices
         for (BotSubscription sub : subs) {
             try {
-                // Business Logic with pre-fetched prices
-                SubscriptionSnapshot snapshot = processSingleSubscription(sub, priceMap);
+                // Business Logic with pre-fetched prices and batch timestamp
+                SubscriptionSnapshot snapshot = processSingleSubscription(sub, priceMap, batchTimestamp);
                 if (snapshot != null) {
                     snapshots.add(snapshot);
                 }
@@ -147,10 +151,12 @@ public class SubSnapshotServiceImpl implements SubSnapshotService {
     /**
      * Process a single bot subscription using pre-fetched prices
      * 
-     * @param sub      Bot subscription to process
-     * @param priceMap Pre-fetched coin prices (coinGeckoId -> price)
+     * @param sub            Bot subscription to process
+     * @param priceMap       Pre-fetched coin prices (coinGeckoId -> price)
+     * @param batchTimestamp Timestamp for this entire batch (prevents flickering)
      */
-    private SubscriptionSnapshot processSingleSubscription(BotSubscription sub, Map<String, BigDecimal> priceMap) {
+    private SubscriptionSnapshot processSingleSubscription(BotSubscription sub, Map<String, BigDecimal> priceMap,
+            Instant batchTimestamp) {
         // --- BƯỚC 1: Lấy giá thị trường từ pre-fetched prices ---
         String symbol = sub.getBot().getCoinSymbol();
 
@@ -202,7 +208,7 @@ public class SubSnapshotServiceImpl implements SubSnapshotService {
                 .botWalletCoin(botWalletCoin) // Lưu lại để trace lịch sử ví
                 .pnl(totalPnl)
                 .roi(roi)
-                .recordedAt(Instant.now())
+                .recordedAt(batchTimestamp) // ✅ Use batch timestamp instead of Instant.now()
                 .build();
 
         log.debug("📸 Prepared Snapshot for Sub {}: Equity=${} | NetInvest=${} | PnL=${} ({}%)",

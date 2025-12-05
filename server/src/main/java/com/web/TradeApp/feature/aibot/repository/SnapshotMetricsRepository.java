@@ -215,29 +215,19 @@ public interface SnapshotMetricsRepository extends JpaRepository<SubscriptionSna
   /**
    * 14. Get chart data (PnL over time) for bot by timeframe
    * Aggregates all active subscriptions' PnL at each snapshot time
-   * Returns List of Object[] where [0] = Instant recordedAt, [1] = BigDecimal
-   * totalPnl
+   * Returns List of Object[] where [0] = Instant recordedAt, [1] = BigDecimal totalPnl
+   * 
+   * NOTE: With batch timestamps, all snapshots in the same batch have identical recordedAt,
+   * so GROUP BY will naturally aggregate them together (no flickering)
    */
-  // @Query("""
-  // SELECT ss.recordedAt, SUM(ss.pnl)
-  // FROM SubscriptionSnapshot ss
-  // WHERE ss.botSubscription.bot.id = :botId
-  // AND ss.botSubscription.active = true
-  // AND ss.recordedAt >= :fromTime
-  // GROUP BY ss.recordedAt // wrong because it requires exact timestamp match to
-  // aggregate properly
-  // ORDER BY ss.recordedAt ASC
-  // """)
   @Query("""
-          SELECT
-            FUNCTION('DATE_FORMAT', ss.recordedAt, '%Y-%m-%d %H:%i:00'),
-            SUM(ss.pnl)
-          FROM SubscriptionSnapshot ss
-          WHERE ss.botSubscription.bot.id = :botId
-            AND ss.botSubscription.active = true
-            AND ss.recordedAt >= :fromTime
-          GROUP BY FUNCTION('DATE_FORMAT', ss.recordedAt, '%Y-%m-%d %H:%i:00')
-          ORDER BY FUNCTION('DATE_FORMAT', ss.recordedAt, '%Y-%m-%d %H:%i:00') ASC
+      SELECT ss.recordedAt, SUM(ss.pnl)
+      FROM SubscriptionSnapshot ss
+      WHERE ss.botSubscription.bot.id = :botId
+        AND ss.botSubscription.active = true
+        AND ss.recordedAt >= :fromTime
+      GROUP BY ss.recordedAt
+      ORDER BY ss.recordedAt ASC
       """)
   List<Object[]> getBotChartData(@Param("botId") UUID botId, @Param("fromTime") Instant fromTime);
 
