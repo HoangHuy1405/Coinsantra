@@ -27,15 +27,6 @@ public class WalletServiceImpl implements WalletService {
         private final WalletSnapshotRepository walletSnapshotRepository;
 
         @Override
-        public AssetResponse getAssetSummary(UUID userId) {
-                Wallet wallet = walletRepository.findByUserId(userId)
-                                .orElseThrow(() -> new RuntimeException("Wallet not found for user: " + userId));
-
-                // Get top 5 their coin holdings by amount
-                throw new UnsupportedOperationException("Unimplemented method 'getAssetSummary'");
-        }
-
-        @Override
         public AssetResponse getAssetTotal(UUID userId) {
                 Wallet wallet = walletRepository.findByUserId(userId)
                                 .orElseThrow(() -> new RuntimeException("Wallet not found for user: " + userId));

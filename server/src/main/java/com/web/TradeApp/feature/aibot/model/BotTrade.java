@@ -25,6 +25,10 @@ public class BotTrade extends BaseTrade {
     private Bot bot;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bot_subscription_id", nullable = false)
+    private BotSubscription botSubscription;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bot_signal_id")
     private BotSignal botSignal;
 

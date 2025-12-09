@@ -51,3 +51,17 @@ export interface SubscriptionFilterParams {
   size: number;
   sortBy?: "pnl" | "equity" | "bot";
 }
+
+export interface BotSubOverview {
+  totalActive: number;
+  totalInactive: number;
+  featuredSubscription: FeaturedSubscription | null;
+}
+
+export interface FeaturedSubscription {
+  subscriptionId: string;
+  botName: string;
+  pnl: number;
+  roi: number;
+  maxDrawdown: number;
+}

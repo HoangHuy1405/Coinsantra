@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.web.TradeApp.exception.IdInvalidException;
 import com.web.TradeApp.feature.aibot.dto.Bot.BotDetailDTO;
 import com.web.TradeApp.feature.aibot.dto.Bot.BotGridItemDTO;
+import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotSubOverviewDTO;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.SubDetailsMetricsDTO;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.SubItemDTO;
 import com.web.TradeApp.feature.aibot.model.Bot;
@@ -378,6 +379,49 @@ public class ModularMetricsServiceImpl implements ModularMetricsService {
             case "current" -> Instant.EPOCH;
             default -> throw new IllegalArgumentException("Invalid timeframe: " + timeframe);
         };
+    }
+
+    @Override
+    public BotSubOverviewDTO getUserBotSubscriptionOverview(
+            UUID userId) {
+        // Get all user subscriptions
+        List<BotSubscription> allSubscriptions = subscriptionRepo.findAllByUserId(userId);
+
+        // Count active and inactive
+        long totalActive = allSubscriptions.stream().filter(BotSubscription::isActive).count();
+        long totalInactive = allSubscriptions.size() - totalActive;
+
+        // Get a random subscription for featured display (if any exist)
+        BotSubOverviewDTO.FeaturedSubscription featured = null;
+
+        if (!allSubscriptions.isEmpty()) {
+            // Pick a random subscription
+            int randomIndex = (int) (Math.random() * allSubscriptions.size());
+            BotSubscription randomSub = allSubscriptions.get(randomIndex);
+
+            // Calculate metrics for this subscription
+            UUID subId = randomSub.getId();
+            Instant compareTime = Instant.EPOCH; // Current metrics (all-time)
+
+            BigDecimal currentPnl = metricsRepo.calcSubPnl(subId, compareTime);
+            BigDecimal currentRoi = metricsRepo.calcSubRoi(subId, compareTime);
+            BigDecimal maxDrawdown = metricsRepo.calcSubMaxDrawdownPct(subId);
+
+            featured = com.web.TradeApp.feature.aibot.dto.BotSubscription.BotSubOverviewDTO.FeaturedSubscription
+                    .builder()
+                    .subscriptionId(randomSub.getId())
+                    .botName(randomSub.getBot().getName())
+                    .pnl(currentPnl != null ? currentPnl : BigDecimal.ZERO)
+                    .roi(currentRoi != null ? currentRoi : BigDecimal.ZERO)
+                    .maxDrawdown(maxDrawdown != null ? maxDrawdown : BigDecimal.ZERO)
+                    .build();
+        }
+
+        return com.web.TradeApp.feature.aibot.dto.BotSubscription.BotSubOverviewDTO.builder()
+                .totalActive(totalActive)
+                .totalInactive(totalInactive)
+                .featuredSubscription(featured)
+                .build();
     }
 
 }

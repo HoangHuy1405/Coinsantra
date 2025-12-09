@@ -138,6 +138,7 @@ public class TradeQueueListener {
         } catch (Exception e) {
             log.error("Failed to process message ID: " + message.getMessageId(), e);
             // Do NOT delete. Azure will make it visible again after 30s for retry.
+            deleteMessage(message);
         }
     }
 

@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.TradeApp.exception.IdInvalidException;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotCopyRequest;
+import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotSubOverviewDTO;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotSubscriptionResponse;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.BotUpdateRequest;
 import com.web.TradeApp.feature.aibot.dto.BotSubscription.SubDetailsMetricsDTO;
@@ -93,6 +95,17 @@ public class BotSubController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/overview")
+    @ApiMessage("Get overview of bot subscriptions successfully")
+    public ResponseEntity<BotSubOverviewDTO> getOverviewBotSubscriptions() {
+        UUID userId = SecurityUtil.getCurrentUserId()
+                .orElseThrow(() -> new IdInvalidException("User not authenticated"));
+
+        BotSubOverviewDTO overview = metricsService
+                .getUserBotSubscriptionOverview(userId);
+        return ResponseEntity.ok(overview);
+    }
+
     @GetMapping("/{subId}")
     @ApiMessage("Get subscription details successfully")
     public ResponseEntity<SubDetailsMetricsDTO> getSubscriptionDetails(
@@ -100,7 +113,7 @@ public class BotSubController {
             @RequestParam(name = "timeframe", defaultValue = "current") String timeframe) {
         // Verify authentication
         SecurityUtil.getCurrentUserId()
-                .orElseThrow(() -> new RuntimeException("User not authenticated"));
+                .orElseThrow(() -> new IdInvalidException("User not authenticated"));
 
         SubDetailsMetricsDTO details = metricsService.getSubscriptionMetrics(subId, timeframe);
         return ResponseEntity.ok(details);

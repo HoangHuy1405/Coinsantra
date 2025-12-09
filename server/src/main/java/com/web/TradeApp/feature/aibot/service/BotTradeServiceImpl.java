@@ -244,13 +244,13 @@ public class BotTradeServiceImpl implements BotTradeService {
                 sub.setBotWalletCoin(sub.getBotWalletCoin().subtract(quantityToSell));
                 // Increase Virtual USDT (Re-invest logic)
                 sub.setBotWalletBalance(sub.getBotWalletBalance().add(finalUsdt));
-                subRepo.save(sub);
+                BotSubscription savedBotSub = subRepo.save(sub);
 
                 // 7. Save Records
                 // Fee = Raw Value - Final Value Received
                 BigDecimal totalFee = rawUsdtValue.subtract(finalUsdt);
                 saveTransaction(userWallet, coin, BaseTrade.TradeType.SELL, quantityToSell, price, totalFee);
-                saveBotTrade(sub, BaseTrade.TradeType.SELL, quantityToSell, price, finalUsdt, totalFee);
+                saveBotTrade(savedBotSub, BaseTrade.TradeType.SELL, quantityToSell, price, finalUsdt, totalFee);
 
                 log.info("✅ SELL: User {} | Sold {} {} | Got {} USDT", sub.getUserId(), quantityToSell,
                                 coin.getSymbol(), finalUsdt);
@@ -275,6 +275,7 @@ public class BotTradeServiceImpl implements BotTradeService {
                         BigDecimal notional, BigDecimal feeOrNotional) {
                 BotTrade trade = BotTrade.builder()
                                 .bot(sub.getBot())
+                                .botSubscription(sub)
                                 // Now we must fetch the User Wallet again or pass it down to ensure BaseTrade
                                 // fields are populated
                                 // Ideally, pass userWallet from executeBuy() into this method to avoid

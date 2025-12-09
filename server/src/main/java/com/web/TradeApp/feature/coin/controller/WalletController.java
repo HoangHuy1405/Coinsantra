@@ -19,15 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class WalletController {
     private final WalletService walletService;
 
-    // @GetMapping("/asset-summary")
-    // public ResponseEntity<AssetResponse> getAssetSummary() {
-    // UUID userId = SecurityUtil.getCurrentUserId()
-    // .orElseThrow(() -> new RuntimeException("User not authenticated"));
-
-    // AssetResponse assetSummary = walletService.getAssetSummary(userId);
-    // return ResponseEntity.ok(assetSummary);
-    // }
-
     @GetMapping("/assets")
     public ResponseEntity<AssetResponse> getAssetTotal() {
         UUID userId = SecurityUtil.getCurrentUserId()

@@ -6,6 +6,7 @@ import {
   BotSubscriptionDetail,
   SubscriptionPaginatedResponse,
   SubscriptionFilterParams,
+  BotSubOverview,
 } from "./interfaces/botSubInterfaces";
 
 export type BotCopyRequest = {
@@ -108,6 +109,72 @@ export const BotSubService = (client: AxiosInstance) => ({
     return response.data;
   },
 });
+
+/**
+ * SSR-compatible method to fetch bot subscriptions with access token
+ * Use this in server components (page.tsx)
+ */
+export async function getAllSubscriptionsSSR(
+  params: SubscriptionFilterParams,
+  accessToken: string,
+): Promise<SubscriptionPaginatedResponse> {
+  const queryParams = new URLSearchParams();
+
+  // Pagination (0-indexed for backend)
+  queryParams.append("page", Math.max(0, params.page - 1).toString());
+  queryParams.append("size", params.size.toString());
+
+  // Sort by
+  if (params.sortBy) {
+    queryParams.append("sortBy", params.sortBy);
+  }
+
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/bot-sub?${queryParams.toString()}`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch bot subscriptions: ${response.statusText}`,
+    );
+  }
+
+  const result = await response.json();
+  return result.data;
+}
+
+/**
+ * SSR-compatible method to fetch bot subscription overview
+ * Use this in server components (page.tsx)
+ */
+export async function getBotSubOverviewSSR(
+  accessToken: string,
+): Promise<import("./interfaces/botSubInterfaces").BotSubOverview> {
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/bot-sub/overview`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch bot subscription overview: ${response.statusText}`,
+    );
+  }
+
+  const result = await response.json();
+  return result.data;
+}
 
 export function useBotSubService() {
   const axiosAuth = useAxiosAuth();
